@@ -4,11 +4,12 @@ import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.data.PackOutput;
 import org.forsteri.ratatouille.Ratatouille;
+import org.forsteri.ratatouille.data.recipe.api.BakingRecipeGen;
 import org.forsteri.ratatouille.entry.CRFluids;
 import org.forsteri.ratatouille.entry.CRItems;
 import org.forsteri.ratatouille.entry.CRRecipeTypes;
 
-public class CompostingRecipeGen extends ProcessingRecipeGen {
+public class CRCompostingRecipeGen extends BakingRecipeGen {
     GeneratedRecipe DEFAULT = this.create("composting", b -> b
             .require(CRItems.COMPOST_MASS.get())
             .duration(200)
@@ -17,12 +18,7 @@ public class CompostingRecipeGen extends ProcessingRecipeGen {
             .output(CRFluids.COMPOST_TEA.get(), 30)
             .output(CRFluids.BIO_GAS.get(), 10));
 
-    public CompostingRecipeGen(PackOutput generator) {
+    public CRCompostingRecipeGen(PackOutput generator) {
         super(generator, Ratatouille.MOD_ID);
-    }
-
-    @Override
-    protected IRecipeTypeInfo getRecipeType() {
-        return CRRecipeTypes.COMPOSTING;
     }
 }

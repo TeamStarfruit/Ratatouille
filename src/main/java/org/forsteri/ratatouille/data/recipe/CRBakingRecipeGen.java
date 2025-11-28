@@ -1,11 +1,10 @@
 package org.forsteri.ratatouille.data.recipe;
 
-import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
 import net.minecraft.data.PackOutput;
 import org.forsteri.ratatouille.Ratatouille;
-import org.forsteri.ratatouille.entry.CRRecipeTypes;
+import org.forsteri.ratatouille.data.recipe.api.BakingRecipeGen;
 
-public class BakingRecipeGen extends ProcessingRecipeGen {
+public class CRBakingRecipeGen extends BakingRecipeGen {
 
 //    GeneratedRecipe
 //            RICE = this.create(
@@ -13,13 +12,8 @@ public class BakingRecipeGen extends ProcessingRecipeGen {
 //            b -> b.output(CRItems.MATURE_MATTER.get()).duration(200)
 //    );
 
-    public BakingRecipeGen(PackOutput generator) {
+    public CRBakingRecipeGen(PackOutput generator) {
         super(generator, Ratatouille.MOD_ID);
-    }
-
-    @Override
-    protected CRRecipeTypes getRecipeType() {
-        return CRRecipeTypes.BAKING;
     }
 
 }

@@ -1,12 +1,12 @@
 package org.forsteri.ratatouille.data.recipe;
 import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
 import org.forsteri.ratatouille.Ratatouille;
+import org.forsteri.ratatouille.data.recipe.api.ThreshingRecipeGen;
 import org.forsteri.ratatouille.entry.CRRecipeTypes;
 import vectorwing.farmersdelight.common.registry.ModItems;
 
-public class ThreshingRecipeGen extends ProcessingRecipeGen {
+public class CRThreshingRecipeGen extends ThreshingRecipeGen {
 
     GeneratedRecipe
             RICE = this.create(
@@ -17,13 +17,7 @@ public class ThreshingRecipeGen extends ProcessingRecipeGen {
 //                    () -> com.ncpbails.culturaldelights.item.ModItems.CORN_COB.get(),
 //                    b -> b.output(com.ncpbails.culturaldelights.item.ModItems.CORN_KERNELS.get()).output(0.5F, com.ncpbails.culturaldelights.item.ModItems.CORN_KERNELS.get()).duration(200).whenModLoaded("culturaldelights")
 //            );
-    public ThreshingRecipeGen(PackOutput generator) {
+    public CRThreshingRecipeGen(PackOutput generator) {
         super(generator, Ratatouille.MOD_ID);
     }
-
-    @Override
-    protected CRRecipeTypes getRecipeType() {
-        return CRRecipeTypes.THRESHING;
-    }
-
 }

@@ -27,12 +27,12 @@ public abstract class RataouilleRecipeProvider extends RecipeProvider {
     }
 
     public static void registerAllProcessing(DataGenerator gen, PackOutput output) {
-        GENERATORS.add(new ThreshingRecipeGen(output));
-        GENERATORS.add(new SqueezingRecipeGen(output));
-        GENERATORS.add(new DemoldingRecipeGen(output));
-        GENERATORS.add(new FreezingRecipeGen(output));
-        GENERATORS.add(new CompostingRecipeGen(output));
-        GENERATORS.add(new BakingRecipeGen(output));
+        GENERATORS.add(new CRThreshingRecipeGen(output));
+        GENERATORS.add(new CRSqueezingRecipeGen(output));
+        GENERATORS.add(new CRDemoldingRecipeGen(output));
+        GENERATORS.add(new CRFreezingRecipeGen(output));
+        GENERATORS.add(new CRCompostingRecipeGen(output));
+        GENERATORS.add(new CRBakingRecipeGen(output));
 
         gen.addProvider(true, new DataProvider() {
             @Override

@@ -2,15 +2,14 @@ package org.forsteri.ratatouille.data.recipe;
 
 import com.simibubi.create.AllItems;
 import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
-import net.minecraft.data.DataGenerator;
 import net.minecraft.data.PackOutput;
-import net.minecraft.world.item.Items;
 import org.forsteri.ratatouille.Ratatouille;
+import org.forsteri.ratatouille.data.recipe.api.DemoldingRecipeGen;
 import org.forsteri.ratatouille.entry.CRItems;
 import org.forsteri.ratatouille.entry.CRRecipeTypes;
 import vectorwing.farmersdelight.common.registry.ModItems;
 
-public class DemoldingRecipeGen extends ProcessingRecipeGen {
+public class CRDemoldingRecipeGen extends DemoldingRecipeGen {
     GeneratedRecipe
         BAR_OF_CHOCOLATE = this.create(
             CRItems.CHOCOLATE_MOLD_SOLID::get,
@@ -28,12 +27,7 @@ public class DemoldingRecipeGen extends ProcessingRecipeGen {
             b -> b.output(ModItems.MELON_POPSICLE.get())
                     .output(CRItems.POPSICLE_MOLD.get())
             );
-    public DemoldingRecipeGen(PackOutput generator) {
+    public CRDemoldingRecipeGen(PackOutput generator) {
         super(generator, Ratatouille.MOD_ID);
-    }
-
-    @Override
-    protected CRRecipeTypes getRecipeType() {
-        return CRRecipeTypes.DEMOLDING;
     }
 }
