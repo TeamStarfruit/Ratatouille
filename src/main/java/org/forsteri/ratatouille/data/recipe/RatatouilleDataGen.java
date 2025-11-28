@@ -28,7 +28,7 @@ public class RatatouilleDataGen {
         });
 
         if (event.includeServer()) {
-            ProcessingRecipeGen.registerAll(generator, output);
+            RataouilleRecipeProvider.registerAllProcessing(generator, output);
         }
     }
 
