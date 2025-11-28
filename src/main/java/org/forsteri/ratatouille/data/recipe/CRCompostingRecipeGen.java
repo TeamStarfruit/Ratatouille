@@ -5,11 +5,12 @@ import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.data.PackOutput;
 import org.forsteri.ratatouille.Ratatouille;
 import org.forsteri.ratatouille.data.recipe.api.BakingRecipeGen;
+import org.forsteri.ratatouille.data.recipe.api.CompostingRecipeGen;
 import org.forsteri.ratatouille.entry.CRFluids;
 import org.forsteri.ratatouille.entry.CRItems;
 import org.forsteri.ratatouille.entry.CRRecipeTypes;
 
-public class CRCompostingRecipeGen extends BakingRecipeGen {
+public class CRCompostingRecipeGen extends CompostingRecipeGen {
     GeneratedRecipe DEFAULT = this.create("composting", b -> b
             .require(CRItems.COMPOST_MASS.get())
             .duration(200)
