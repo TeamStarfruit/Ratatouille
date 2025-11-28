@@ -14,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Consumer;
 
 public abstract class RataouilleRecipeProvider extends RecipeProvider {
-    protected final List<GeneratedRecipe> all = new ArrayList<>();
     protected static final List<ProcessingRecipeGen> GENERATORS = new ArrayList<>();
     protected static final int BUCKET = 1000;
     protected static final int BOTTLE = 250;
@@ -25,12 +24,6 @@ public abstract class RataouilleRecipeProvider extends RecipeProvider {
 
     @Override
     protected void buildRecipes(Consumer<FinishedRecipe> pWriter) {
-        all.forEach(c -> c.register(pWriter));
-    }
-
-    protected GeneratedRecipe register(GeneratedRecipe recipe) {
-        all.add(recipe);
-        return recipe;
     }
 
     public static void registerAllProcessing(DataGenerator gen, PackOutput output) {
@@ -54,17 +47,5 @@ public abstract class RataouilleRecipeProvider extends RecipeProvider {
                 return "Ratatouille's Processing Recipes";
             }
         });
-    }
-
-    @FunctionalInterface
-    public interface GeneratedRecipe {
-        void register(Consumer<FinishedRecipe> consumer);
-    }
-
-    protected static class Marker {
-    }
-
-    protected static class I {
-
     }
 }
