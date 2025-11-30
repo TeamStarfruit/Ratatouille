@@ -11,14 +11,14 @@
       "item": "minecraft:sugar"
     },
     {
-      "type": "fluid_stack",
+      "type": "neoforge:single",
       "amount": 250,
       "fluid": "ratatouille:egg_yolk"
     },
     {
-      "type": "fluid_tag",
+      "type": "neoforge:tag",
       "amount": 250,
-      "fluid_tag": "c:milk"
+      "tag": "c:milk"
     }
   ],
   "results": [

@@ -17,7 +17,7 @@
           "item": "ratatouille:unprocessed_mature_matter_fold"
         },
         {
-          "type": "fluid_stack",
+          "type": "neoforge:single",
           "amount": 100,
           "fluid": "ratatouille:compost_tea"
         }

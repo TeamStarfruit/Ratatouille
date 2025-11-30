@@ -19,6 +19,7 @@ import net.minecraft.world.level.ItemLike;
 import net.neoforged.neoforge.common.conditions.ICondition;
 import net.neoforged.neoforge.common.conditions.ModLoadedCondition;
 import net.neoforged.neoforge.common.conditions.NotCondition;
+import org.checkerframework.checker.units.qual.A;
 import org.forsteri.ratatouille.Ratatouille;
 import org.forsteri.ratatouille.entry.CRBlocks;
 import org.forsteri.ratatouille.entry.CRFluids;
@@ -157,9 +158,15 @@ public final class RatatouilleStandardRecipeGen extends BaseRecipeProvider {
                             .define('Z', AllBlocks.SHAFT)
                             .define('S', AllItems.ANDESITE_ALLOY)
                             .define('X', AllBlocks.MECHANICAL_HARVESTER)
+                    ),
+    ZINC_CAN = create(CRBlocks.ZINC_CAN_BLOCK)
+                    .unlockedBy(AllItems.ZINC_INGOT::asItem)
+                    .viaShaped(b -> b
+                            .pattern("Y Y")
+                            .pattern("Y Y")
+                            .pattern("YYY")
+                            .define('Y', CRItems.ZINC_PLATE)
                     );
-
-    // smoking
     GeneratedRecipe
             CAKE_MOLD_BAKED = create(CRItems.CAKE_MOLD_BAKED::get)
             .viaCooking(CRItems.CAKE_MOLD_FILLED::get)

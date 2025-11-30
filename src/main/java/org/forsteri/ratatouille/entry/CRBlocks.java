@@ -25,6 +25,8 @@ import org.forsteri.ratatouille.content.spreader.SpreaderBlock;
 import org.forsteri.ratatouille.content.squeeze_basin.SqueezeBasinBlock;
 import org.forsteri.ratatouille.content.squeeze_basin.SqueezeBasinGenerator;
 import org.forsteri.ratatouille.content.thresher.ThresherBlock;
+import org.forsteri.ratatouille.content.zinc_can.ZincCanBlock;
+import org.forsteri.ratatouille.content.zinc_can.ZincCanBlockEntity;
 
 import static com.simibubi.create.foundation.data.BlockStateGen.simpleCubeAll;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
@@ -136,6 +138,15 @@ public class CRBlocks {
             .addLayer(() -> RenderType::cutoutMipped)
             .item(CompostTowerBlockItem::new)
             .model((c, p) -> p.withExistingParent(c.getName(), Ratatouille.asResource("block/compost_tower/item")))
+            .build()
+            .register();
+    public static final BlockEntry<ZincCanBlock> ZINC_CAN_BLOCK = Ratatouille.REGISTRATE
+            .block("zinc_can", ZincCanBlock::new)
+            .initialProperties(SharedProperties::copperMetal)
+            .properties((p) -> BlockBehaviour.Properties.of().mapColor(MapColor.RAW_IRON).strength(2.8F).friction(0.989F).sound(SoundType.STONE).randomTicks())
+            .transform(pickaxeOnly())
+            .blockstate(simpleCubeAll("zinc_can"))
+            .item()
             .build()
             .register();
 

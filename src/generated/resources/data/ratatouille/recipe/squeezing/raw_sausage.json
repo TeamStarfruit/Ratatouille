@@ -5,7 +5,7 @@
       "item": "ratatouille:sausage_casing"
     },
     {
-      "type": "fluid_stack",
+      "type": "neoforge:single",
       "amount": 250,
       "fluid": "ratatouille:mince_meat"
     }
