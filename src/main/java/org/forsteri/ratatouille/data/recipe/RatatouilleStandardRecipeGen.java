@@ -158,14 +158,6 @@ public final class RatatouilleStandardRecipeGen extends BaseRecipeProvider {
                             .define('Z', AllBlocks.SHAFT)
                             .define('S', AllItems.ANDESITE_ALLOY)
                             .define('X', AllBlocks.MECHANICAL_HARVESTER)
-                    ),
-    ZINC_CAN = create(CRBlocks.ZINC_CAN_BLOCK)
-                    .unlockedBy(AllItems.ZINC_INGOT::asItem)
-                    .viaShaped(b -> b
-                            .pattern("Y Y")
-                            .pattern("Y Y")
-                            .pattern("YYY")
-                            .define('Y', CRItems.ZINC_PLATE)
                     );
     GeneratedRecipe
             CAKE_MOLD_BAKED = create(CRItems.CAKE_MOLD_BAKED::get)

@@ -24,7 +24,6 @@ import org.forsteri.ratatouille.content.squeeze_basin.SqueezeBasinVisual;
 import org.forsteri.ratatouille.content.thresher.ThresherBlockEntity;
 import org.forsteri.ratatouille.content.thresher.ThresherRenderer;
 import org.forsteri.ratatouille.content.thresher.ThresherVisual;
-import org.forsteri.ratatouille.content.zinc_can.ZincCanBlockEntity;
 
 public class CRBlockEntityTypes {
     public static final BlockEntityEntry<OvenBlockEntity> OVEN_ENTITY = Ratatouille.REGISTRATE
@@ -82,12 +81,6 @@ public class CRBlockEntityTypes {
             .validBlock(CRBlocks.COMPOST_TOWER_BLOCK)
             .renderer(() -> CompostTowerRenderer::new)
             .register();
-
-    public static final BlockEntityEntry<ZincCanBlockEntity> ZINC_CAN_BLOCK_ENTITY = Ratatouille.REGISTRATE
-            .blockEntity("zinc_can", ZincCanBlockEntity::new)
-            .validBlock(CRBlocks.ZINC_CAN_BLOCK)
-            .register();
-
 
     public static void register() {
     }
