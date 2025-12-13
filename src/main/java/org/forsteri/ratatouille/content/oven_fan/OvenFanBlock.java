@@ -99,8 +99,7 @@ public class OvenFanBlock extends HorizontalKineticBlock implements ICogWheel, I
 
     @Override
     public boolean hasShaftTowards(LevelReader world, BlockPos pos, BlockState state, Direction face) {
-        return face == state.getValue(HORIZONTAL_FACING)
-                .getOpposite();
+        return false;
     }
 
     @Override
