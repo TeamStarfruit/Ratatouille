@@ -18,6 +18,7 @@
   "ratatouille.compost_tower.fan_dots": "......",
   "ratatouille.compost_tower.heat_dots": "......",
   "ratatouille.compost_tower.max_lvl": "Max Level",
+  "ratatouille.gui.goggles.current_layer_fluid_output": "Current Layer Fluid Output",
   "ratatouille.gui.goggles.squeeze_basin_contents": "Basin Contents",
   "ratatouille.recipe.squeezing": "Squeezing",
   "ratatouille.recipe.threshing": "Threshing",

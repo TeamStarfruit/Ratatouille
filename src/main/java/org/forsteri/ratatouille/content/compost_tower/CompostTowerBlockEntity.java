@@ -6,7 +6,11 @@ import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
 import com.simibubi.create.foundation.item.ItemHelper;
+import com.simibubi.create.foundation.utility.CreateLang;
+import com.sun.jdi.connect.spi.TransportService;
 import net.createmod.catnip.animation.LerpedFloat;
+import net.createmod.catnip.lang.LangBuilder;
+import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -19,13 +23,16 @@ import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.capabilities.Capability;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.CombinedInvWrapper;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.forsteri.ratatouille.entry.CRBlockEntityTypes;
 import org.forsteri.ratatouille.entry.CRRecipeTypes;
+import org.forsteri.ratatouille.util.Lang;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -341,12 +348,35 @@ public class CompostTowerBlockEntity extends SmartBlockEntity implements IHaveGo
         radius = width;
     }
 
+    private boolean outputFluidTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
+        CompostTowerBlockEntity controllerBE = getControllerBE();
+        if (controllerBE == null)
+            return false;
 
+        Lang.translate("gui.goggles.current_layer_fluid_output")
+                .forGoggles(tooltip);
+
+        var outputHeight = getOutputHeight();
+        var towerHeight = getTowerHeight();
+        var availFluid = controllerBE.tankInventory.getFluidAtBlockHeight(outputHeight, towerHeight);
+
+        FluidStack fluidStack = new FluidStack(availFluid, 1);
+        if (fluidStack.isEmpty())
+            return false;
+
+        CreateLang.fluidName(fluidStack)
+                .style(ChatFormatting.GRAY)
+                .forGoggles(tooltip, 1);
+        return true;
+    }
 
     @Override
     public boolean addToGoggleTooltip(List<Component> tooltip, boolean isPlayerSneaking) {
         CompostTowerBlockEntity controllerBE = getControllerBE();
-        if (controllerBE == null)
+        if (controllerBE == null || level == null)
+            return false;
+
+        if (!outputFluidTooltip(tooltip, isPlayerSneaking))
             return false;
 
         return controllerBE.compostData.addToGoggleTooltip(tooltip, isPlayerSneaking);
@@ -392,6 +422,8 @@ public class CompostTowerBlockEntity extends SmartBlockEntity implements IHaveGo
             radius = compound.getInt("Size");
             height = compound.getInt("Height");
             tankInventory.deserializeNBT(compound.getCompound("TankContent"));
+            inputInventory.deserializeNBT(compound.getCompound("InputInv"));
+            outputInventory.deserializeNBT(compound.getCompound("OutputInv"));
             applyFluidTankSize(getTotalTankSize());
 
             for (var fluid : tankInventory.getSortedFluids()) {
@@ -441,6 +473,8 @@ public class CompostTowerBlockEntity extends SmartBlockEntity implements IHaveGo
             compound.putInt("Height", height);
             applyFluidTankSize(getTotalTankSize());
             compound.put("TankContent", tankInventory.serializeNBT());
+            compound.put("InputInv", inputInventory.serializeNBT());
+            compound.put("OutputInv", outputInventory.serializeNBT());
         }
 
         super.write(compound, clientPacket);
