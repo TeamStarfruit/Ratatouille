@@ -2,33 +2,31 @@ package org.forsteri.ratatouille.content.compost_tower;
 
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
-import com.simibubi.create.foundation.blockEntity.behaviour.fluid.SmartFluidTankBehaviour;
-import com.simibubi.create.foundation.fluid.CombinedTankWrapper;
+import com.simibubi.create.foundation.recipe.RecipeFinder;
+import com.simibubi.create.foundation.recipe.trie.AbstractVariant;
+import com.simibubi.create.foundation.recipe.trie.RecipeTrie;
+import com.simibubi.create.foundation.recipe.trie.RecipeTrieFinder;
 import joptsimple.internal.Strings;
 import net.minecraft.ChatFormatting;
 import net.minecraft.core.BlockPos;
-import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.wrapper.RecipeWrapper;
-import org.forsteri.ratatouille.content.thresher.ThreshingRecipe;
-import org.forsteri.ratatouille.entry.CRFluids;
-import org.forsteri.ratatouille.entry.CRItems;
-import org.forsteri.ratatouille.entry.CRRecipeTypes;
+import net.minecraftforge.items.ItemStackHandler;
 import org.forsteri.ratatouille.util.Lang;
 import org.jetbrains.annotations.NotNull;
 
+import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
+import java.util.Set;
 
 public class CompostData {
     public int sizeLevel;
@@ -36,6 +34,7 @@ public class CompostData {
     public int updateRequired;
     public int timer;
     public CompostingRecipe lastRecipe;
+    private static final Object compostingRecipesKey = new Object();
 
     public void clear() {
         sizeLevel = 0;
@@ -72,73 +71,48 @@ public class CompostData {
         return tempLevel != prevTemp;
     }
 
-    public void tick(CompostTowerBlockEntity tower) {
-        if (updateCompostTower(tower))
-            tower.notifyUpdate();
+    public void tick(CompostTowerBlockEntity controller) {
+        if (updateCompostTower(controller))
+            controller.notifyUpdate();
 
-        assert tower.getLevel() != null;
+        assert controller.getLevel() != null;
 
-        var itemHandler = tower.getItemInventory();
-        var fluidHandler = tower.tankInventory;
-        RecipeWrapper inventoryIn = new RecipeWrapper(itemHandler);
+        var inputInventory = controller.inputInventory;
+        var fluidHandler = controller.tankInventory;
+
         if (timer > 0) {
-            if (this.lastRecipe == null || !this.lastRecipe.matches(inventoryIn, tower.getLevel())) {
-                Optional<CompostingRecipe> recipe = CRRecipeTypes.COMPOSTING.find(inventoryIn, tower.getLevel());
-                if (recipe.isEmpty()) {
+            timer -= getProcessingSpeed();
+            if (controller.getLevel().isClientSide) return;
+
+            if (timer <= 0) {
+                if (!CompostingRecipe.match(controller, lastRecipe)
+                        || !canOutput(inputInventory, fluidHandler)) {
+                    updateLastRecipe(controller);
                     return;
                 }
-                this.lastRecipe =  recipe.get();
-            }
 
-            boolean canOutput = true;
-            for (ItemStack outputStack : lastRecipe.rollResults()) {
-                if (outputStack.isEmpty()) continue;
-                if (!ItemHandlerHelper.insertItemStacked(itemHandler, outputStack, true).isEmpty()) {
-                    canOutput = false;
-                    break;
-                }
+                CompostingRecipe.apply(controller, lastRecipe);
+                controller.notifyUpdate();
             }
-            for (FluidStack fluidStack : lastRecipe.getFluidResults()) {
-                if (fluidStack.isEmpty()) continue;
-                if (fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) < fluidStack.getAmount()) {
-                    canOutput = false;
-                    break;
-                }
-            }
-            if (!canOutput) {
-                timer = 100;
-                return;
-            }
-
-            timer -= getProcessingSpeed();
-            if (tower.getLevel().isClientSide) {
-                return;
-            }
-            if (timer <= 0) {
-                itemHandler.consume(lastRecipe.getIngredients().get(0).getItems()[0], false);
-                this.lastRecipe.rollResults().forEach((stack) -> {
-                    ItemHandlerHelper.insertItemStacked(itemHandler, stack, false);
-                });
-                this.lastRecipe.getFluidResults().forEach((fluidStack) -> {
-                    fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.EXECUTE);
-                });
-                tower.notifyUpdate();
-            }
-            return;
+        } else  {
+            updateLastRecipe(controller);
         }
+    }
 
-        if (lastRecipe == null || !lastRecipe.matches(inventoryIn, tower.getLevel())) {
-            Optional<CompostingRecipe> recipe = CRRecipeTypes.COMPOSTING.find(inventoryIn, tower.getLevel());
-            if (recipe.isEmpty()) {
-                timer = 100;
-            } else {
-                lastRecipe = recipe.get();
-                timer = lastRecipe.getProcessingDuration();
+    private boolean canOutput(ItemStackHandler outputInventory, IFluidHandler fluidHandler) {
+        for (ItemStack outputStack : lastRecipe.rollResults()) {
+            if (outputStack.isEmpty()) continue;
+            if (!ItemHandlerHelper.insertItemStacked(outputInventory, outputStack, true).isEmpty()) {
+                return false;
             }
-        } else {
-            timer = lastRecipe.getProcessingDuration();
         }
-        tower.notifyUpdate();
+        for (FluidStack fluidStack : lastRecipe.getFluidResults()) {
+            if (fluidStack.isEmpty()) continue;
+            if (fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) < fluidStack.getAmount()) {
+                return false;
+            }
+        }
+        return true;
     }
 
     public boolean evaluate(CompostTowerBlockEntity tower) {
@@ -235,5 +209,45 @@ public class CompostData {
             return 16;
         else
             return (int) (sizeLevel / 8.0 * tempLevel / 8.0 * 512);
+    }
+
+    private void updateLastRecipe(CompostTowerBlockEntity controller) {
+        if (CompostingRecipe.match(controller, lastRecipe)) {
+            timer = lastRecipe.getProcessingDuration();
+            controller.notifyUpdate();
+            return;
+        }
+
+        List<CompostingRecipe> list = new ArrayList<>();
+        try {
+            RecipeTrie<?> trie = RecipeTrieFinder.get(getRecipeCacheKey(), controller.getLevel(), this::matchStaticFilters);
+            Set<AbstractVariant> availableVariants = RecipeTrie.getVariants(controller.inputInventory, controller.tankInventory);
+
+            for (Recipe<?> r : trie.lookup(availableVariants))
+                if (CompostingRecipe.match(controller, r))
+                    list.add((CompostingRecipe) r);
+        } catch (Exception e) {
+            list.clear();
+
+            for (Recipe<?> r : RecipeFinder.get(getRecipeCacheKey(), controller.getLevel(), this::matchStaticFilters))
+                if (CompostingRecipe.match(controller, r))
+                    list.add((CompostingRecipe) r);
+        }
+
+        list.sort((r1, r2) -> r2.getIngredients().size() - r1.getIngredients().size());
+
+        if (!list.isEmpty()) {
+            lastRecipe = list.get(0);
+            timer = lastRecipe.getProcessingDuration();
+            controller.notifyUpdate();
+        }
+    }
+
+    private boolean matchStaticFilters(Recipe<?> recipe) {
+        return true;
+    }
+
+    protected Object getRecipeCacheKey() {
+        return compostingRecipesKey;
     }
 }

@@ -13,6 +13,7 @@ import org.forsteri.ratatouille.entry.CRFluids;
 import org.forsteri.ratatouille.entry.CRItems;
 import org.jetbrains.annotations.NotNull;
 
+/// legacy
 public class CompostItemHandler implements IItemHandlerModifiable {
     protected CompostFluidTank tank;
     private static final int ITEM_FLUID_RATIO = 8000 / 100;

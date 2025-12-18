@@ -59,7 +59,8 @@ public class CompostTowerBlock extends Block implements IWrenchable, IBE<Compost
             BlockEntity be = world.getBlockEntity(pos);
             if (!(be instanceof CompostTowerBlockEntity towerBE))
                 return;
-//            ItemHelper.dropContents(world, pos, new ItemFromFluidInvHandler(new SmartFluidTank[]{towerBE.tankInventory}));
+            ItemHelper.dropContents(world, pos, towerBE.inputInventory);
+            ItemHelper.dropContents(world, pos, towerBE.outputInventory);
             world.removeBlockEntity(pos);
             ConnectivityHandler.splitMulti(towerBE);
         }
