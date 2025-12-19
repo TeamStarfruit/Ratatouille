@@ -1,0 +1,26 @@
+{
+  "type": "ratatouille:composting",
+  "ingredients": [
+    {
+      "amount": 50,
+      "fluid": "minecraft:water",
+      "nbt": {}
+    },
+    {
+      "amount": 50,
+      "fluidTag": "forge:milk"
+    },
+    {
+      "amount": 50,
+      "fluid": "minecraft:lava",
+      "nbt": {}
+    }
+  ],
+  "processingTime": 200,
+  "results": [
+    {
+      "amount": 150,
+      "fluid": "create:honey"
+    }
+  ]
+}
