@@ -109,9 +109,9 @@ public class CompostTowerRenderer extends SafeBlockEntityRenderer<CompostTowerBl
             return;
 
         renderInventoryItems(be, be.inputInventory, fluidSurfaceY, partialTicks,
-                ms, buffer, light, overlay);
+                ms, buffer, light, overlay, 0f);
         renderInventoryItems(be, be.outputInventory, fluidSurfaceY, partialTicks,
-                ms, buffer, light, overlay);
+                ms, buffer, light, overlay, 90f);
     }
 
     private void renderInventoryItems(CompostTowerBlockEntity be,
@@ -121,7 +121,8 @@ public class CompostTowerRenderer extends SafeBlockEntityRenderer<CompostTowerBl
                                       PoseStack ms,
                                       MultiBufferSource buffer,
                                       int light,
-                                      int overlay) {
+                                      int overlay,
+                                      float angleOffset) {
 
         int radius = be.getWidth();
         RandomSource random = RandomSource.create(be.getBlockPos().hashCode());
@@ -156,7 +157,7 @@ public class CompostTowerRenderer extends SafeBlockEntityRenderer<CompostTowerBl
 
             ms.pushPose();
 
-            float angle = angleStep * index++;
+            float angle = angleStep * index++ + angleOffset;
 
             if (hasFluid) {
                 float bob =

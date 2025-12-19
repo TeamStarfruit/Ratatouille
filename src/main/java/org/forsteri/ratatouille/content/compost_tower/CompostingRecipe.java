@@ -2,6 +2,7 @@ package org.forsteri.ratatouille.content.compost_tower;
 
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.capability.IFluidHandler;
@@ -115,9 +116,10 @@ public class CompostingRecipe extends ProcessingRecipe<RecipeWrapper> {
     // only for CompostTowerBlockEntity::canProcess, not used in recipe matching
     @Override
     public boolean matches(@NotNull RecipeWrapper inv, @NotNull Level world) {
-        for (int slot = 0; slot < inv.getContainerSize(); slot++) {
-            if (ingredients.get(0)
-                    .test(inv.getItem(slot))) return true;
+        for (Ingredient ingredient : ingredients) {
+            if (ingredient.test(inv.getItem(0))) {
+                return true;
+            }
         }
         return false;
     }
