@@ -38,7 +38,16 @@ public class CRCompostingRecipeGen extends CompostingRecipeGen {
                     .require(Tags.Fluids.MILK, 50)
                     .require(Fluids.LAVA, 50)
                     .duration(200)
-                    .output(AllFluids.HONEY.get(),150))
+                    .output(AllFluids.HONEY.get(),150)),
+
+            TEST2 = this.create("test2", b -> b
+                    .require(Fluids.WATER,50)
+                    .require(Tags.Fluids.MILK, 50)
+                    .require(Fluids.LAVA, 50)
+                    .duration(200)
+                    .output(CRFluids.COMPOST_RESIDUE_FLUID.get(), 60)
+                    .output(CRFluids.COMPOST_TEA.get(), 30)
+                    .output(CRFluids.BIO_GAS.get(), 10))
     ;
 
     public CRCompostingRecipeGen(PackOutput generator) {
