@@ -24,6 +24,13 @@ import java.util.List;
 
 public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
 
+    private static final int SLOT = 18;
+    private static final int COLUMNS = 3;
+
+    private static final int INPUT_X = 5;
+    private static final int OUTPUT_X = 124;
+    private static final int CENTER_Y = 38;
+
     private final AnimatedCompostTower tower = new AnimatedCompostTower();
     private final AnimatedBlazeBurner heater = new AnimatedBlazeBurner();
 
@@ -34,122 +41,125 @@ public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CompostingRecipe recipe, IFocusGroup focuses) {
 
-        /*
-         * ======================
-         * 物品输入（左侧 3 个）
-         * ======================
-         */
-        List<Pair<Ingredient, MutableInt>> itemInputs =
-                ItemHelper.condenseIngredients(recipe.getIngredients());
+        List<SlotEntry> inputs = new ArrayList<>();
 
-        for (int i = 0; i < Math.min(3, itemInputs.size()); i++) {
-            Pair<Ingredient, MutableInt> pair = itemInputs.get(i);
+        for (Pair<Ingredient, MutableInt> pair :
+                ItemHelper.condenseIngredients(recipe.getIngredients())) {
+
             List<ItemStack> stacks = new ArrayList<>();
-
             for (ItemStack is : pair.getFirst().getItems()) {
                 ItemStack copy = is.copy();
                 copy.setCount(pair.getSecond().getValue());
                 stacks.add(copy);
             }
-
-            builder.addSlot(
-                            RecipeIngredientRole.INPUT,
-                            5,
-                            17 + i * 19
-                    )
-                    .setBackground(getRenderedSlot(), -1, -1)
-                    .addItemStacks(stacks);
+            inputs.add(SlotEntry.item(stacks));
         }
 
-        /*
-         * ======================
-         * 流体输入（中左 3 个）
-         * ======================
-         */
-        List<FluidStack> fluidInputs = recipe.getFluidIngredients()
-                .stream()
-                .map(fi -> fi.getMatchingFluidStacks())
-                .flatMap(List::stream)
-                .limit(3)
-                .toList();
+        recipe.getFluidIngredients()
+                .forEach(fi ->
+                        fi.getMatchingFluidStacks()
+                                .forEach(fs -> inputs.add(SlotEntry.fluid(fs)))
+                );
 
-        for (int i = 0; i < fluidInputs.size(); i++) {
-            FluidStack stack = fluidInputs.get(i);
+        layoutMixedSlots(builder, inputs, RecipeIngredientRole.INPUT, INPUT_X);
 
-            builder.addSlot(
-                            RecipeIngredientRole.INPUT,
-                            28,
-                            17 + i * 19
-                    )
-                    .setBackground(getRenderedSlot(), -1, -1)
-                    .setFluidRenderer(stack.getAmount(), false, 16, 16)
-                    .addIngredient(ForgeTypes.FLUID_STACK, stack);
-        }
+        List<SlotEntry> outputs = new ArrayList<>();
 
-        /*
-         * ======================
-         * 物品输出（右侧 3 个）
-         * ======================
-         */
-        List<ItemStack> itemOutputs = recipe.getRollableResults()
-                .stream()
-                .map(r -> r.getStack())
-                .toList();
+        recipe.getRollableResults()
+                .forEach(r -> outputs.add(SlotEntry.item(List.of(r.getStack()))));
 
-        for (int i = 0; i < Math.min(3, itemOutputs.size()); i++) {
-            builder.addSlot(
-                            RecipeIngredientRole.OUTPUT,
-                            124,
-                            17 + i * 19
-                    )
-                    .setBackground(getRenderedSlot(), -1, -1)
-                    .addItemStack(itemOutputs.get(i));
-        }
+        recipe.getFluidResults()
+                .forEach(fs -> outputs.add(SlotEntry.fluid(fs)));
 
-        /*
-         * ======================
-         * 流体输出（最右 3 个）
-         * ======================
-         */
-        List<FluidStack> fluidOutputs = recipe.getFluidResults();
+        layoutMixedSlots(builder, outputs, RecipeIngredientRole.OUTPUT, OUTPUT_X);
+    }
 
-        for (int i = 0; i < Math.min(3, fluidOutputs.size()); i++) {
-            FluidStack stack = fluidOutputs.get(i);
+    private void layoutMixedSlots(
+            IRecipeLayoutBuilder builder,
+            List<SlotEntry> entries,
+            RecipeIngredientRole role,
+            int baseX
+    ) {
+        int rows = (int) Math.ceil(entries.size() / (double) COLUMNS);
+        int startY = CENTER_Y - (rows * SLOT) / 2;
 
-            builder.addSlot(
-                            RecipeIngredientRole.OUTPUT,
-                            147,
-                            17 + i * 19
-                    )
-                    .setBackground(getRenderedSlot(), -1, -1)
-                    .setFluidRenderer(stack.getAmount(), false, 16, 16)
-                    .addIngredient(ForgeTypes.FLUID_STACK, stack);
+        for (int row = 0; row < rows; row++) {
+            int rowStart = row * COLUMNS;
+            int rowEnd = Math.min(rowStart + COLUMNS, entries.size());
+            int countInRow = rowEnd - rowStart;
+
+            int rowWidth = countInRow * SLOT;
+            int startX = baseX + (COLUMNS * SLOT - rowWidth) / 2;
+
+            for (int i = 0; i < countInRow; i++) {
+                int index = rowStart + i;
+                int x = startX + i * SLOT;
+                int y = startY + row * SLOT;
+
+                SlotEntry entry = entries.get(index);
+
+                var slot = builder.addSlot(role, x, y)
+                        .setBackground(getRenderedSlot(), -1, -1);
+
+                if (entry.isFluid()) {
+                    FluidStack fs = entry.fluid;
+                    slot.setFluidRenderer(fs.getAmount(), false, 16, 16)
+                            .addIngredient(ForgeTypes.FLUID_STACK, fs);
+                } else {
+                    slot.addItemStacks(entry.items);
+                }
+            }
         }
     }
 
-    protected void renderWidgets(GuiGraphics graphics, CompostingRecipe recipe, double mouseX, double mouseY) {
-        getBlockShadow().render(graphics, 65, 39);
-        AllGuiTextures.JEI_LONG_ARROW.render(graphics, 54, 51);
+    @Override
+    public void draw(
+            CompostingRecipe recipe,
+            IRecipeSlotsView view,
+            GuiGraphics g,
+            double mouseX,
+            double mouseY
+    ) {
+        PoseStack pose = g.pose();
+
+        getBlockShadow().render(g, 65, 39);
+        AllGuiTextures.JEI_LONG_ARROW.render(g, 54, 51);
+
+        pose.pushPose();
+        pose.translate(75, -15, 0);
+
+        pose.pushPose();
+        pose.translate(0, 20, -7);
+        heater.withHeat(recipe.getRequiredHeat().visualizeAsBlazeBurner()).draw(g);
+        pose.popPose();
+
+        tower.draw(g);
+        pose.popPose();
     }
 
     protected AllGuiTextures getBlockShadow() {
         return AllGuiTextures.JEI_LIGHT;
     }
 
-    @Override
-    public void draw(CompostingRecipe recipe, IRecipeSlotsView view, GuiGraphics g, double mouseX, double mouseY) {
-        PoseStack stack = g.pose();
+    private static class SlotEntry {
+        final List<ItemStack> items;
+        final FluidStack fluid;
 
-        renderWidgets(g, recipe, mouseX, mouseY);
-        stack.pushPose();
-        stack.translate(75, -15, 0);
+        private SlotEntry(List<ItemStack> items, FluidStack fluid) {
+            this.items = items;
+            this.fluid = fluid;
+        }
 
-        stack.pushPose();
-        stack.translate(0, 20, -7);
-        heater.withHeat(recipe.getRequiredHeat().visualizeAsBlazeBurner()).draw(g);
-        stack.popPose();
+        static SlotEntry item(List<ItemStack> stacks) {
+            return new SlotEntry(stacks, null);
+        }
 
-        tower.draw(g);
-        stack.popPose();
+        static SlotEntry fluid(FluidStack stack) {
+            return new SlotEntry(null, stack);
+        }
+
+        boolean isFluid() {
+            return fluid != null;
+        }
     }
 }
