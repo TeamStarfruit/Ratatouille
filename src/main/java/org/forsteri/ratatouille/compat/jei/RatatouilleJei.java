@@ -109,7 +109,7 @@ public class RatatouilleJei implements IModPlugin {
                 .addTypedRecipes(CRRecipeTypes.COMPOSTING::getType)
                 .catalyst(CRBlocks.COMPOST_TOWER_BLOCK::get)
                 .itemIcon(CRBlocks.COMPOST_TOWER_BLOCK.get())
-                .emptyBackground(185, 72)
+                .emptyBackground(190, 72)
                 .build("composting", CompostingCategory::new);
         allCategories.forEach(registration::addRecipeCategories);
     }

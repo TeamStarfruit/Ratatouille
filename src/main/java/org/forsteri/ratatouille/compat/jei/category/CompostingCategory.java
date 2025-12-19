@@ -26,9 +26,6 @@ public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
 
     private static final int SLOT = 18;
     private static final int COLUMNS = 3;
-
-    private static final int INPUT_X = 3;
-    private static final int OUTPUT_X = 126;
     private static final int CENTER_Y = 54;
 
     private final AnimatedCompostTower tower = new AnimatedCompostTower();
@@ -40,12 +37,9 @@ public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CompostingRecipe recipe, IFocusGroup focuses) {
-
         List<SlotEntry> inputs = new ArrayList<>();
 
-        for (Pair<Ingredient, MutableInt> pair :
-                ItemHelper.condenseIngredients(recipe.getIngredients())) {
-
+        for (Pair<Ingredient, MutableInt> pair : ItemHelper.condenseIngredients(recipe.getIngredients())) {
             List<ItemStack> stacks = new ArrayList<>();
             for (ItemStack is : pair.getFirst().getItems()) {
                 ItemStack copy = is.copy();
@@ -56,12 +50,8 @@ public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
         }
 
         recipe.getFluidIngredients()
-                .forEach(fi ->
-                        fi.getMatchingFluidStacks()
-                                .forEach(fs -> inputs.add(SlotEntry.fluid(fs)))
-                );
-
-        layoutMixedSlots(builder, inputs, RecipeIngredientRole.INPUT, INPUT_X);
+                .forEach(fi -> fi.getMatchingFluidStacks()
+                        .forEach(fs -> inputs.add(SlotEntry.fluid(fs))));
 
         List<SlotEntry> outputs = new ArrayList<>();
 
@@ -71,7 +61,14 @@ public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
         recipe.getFluidResults()
                 .forEach(fs -> outputs.add(SlotEntry.fluid(fs)));
 
-        layoutMixedSlots(builder, outputs, RecipeIngredientRole.OUTPUT, OUTPUT_X);
+        int bgWidth = getBackground().getWidth();
+        int padding = 8;
+
+        int inputX = padding;
+        int outputX = bgWidth - (COLUMNS * SLOT) - padding;
+
+        layoutMixedSlots(builder, inputs, RecipeIngredientRole.INPUT, inputX);
+        layoutMixedSlots(builder, outputs, RecipeIngredientRole.OUTPUT, outputX);
     }
 
     private void layoutMixedSlots(
@@ -121,19 +118,25 @@ public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
             double mouseY
     ) {
         PoseStack pose = g.pose();
-
-        getBlockShadow().render(g, 65, 39);
-        AllGuiTextures.JEI_LONG_ARROW.render(g, 54, 51);
+        int centerX = getBackground().getWidth() / 2;
 
         pose.pushPose();
-        pose.translate(75, -15, 0);
+        pose.translate(centerX - 10, -15, 0);
+
+        getBlockShadow().render(g, -11-6, 54);
+
+        AllGuiTextures.JEI_ARROW.render(g, -11, 66);
 
         pose.pushPose();
-        pose.translate(0, 20, -7);
+        pose.translate(-6, 20, -7);
         heater.withHeat(recipe.getRequiredHeat().visualizeAsBlazeBurner()).draw(g);
         pose.popPose();
 
+        pose.pushPose();
+        pose.translate(-6, 0, 0);
         tower.draw(g);
+        pose.popPose();
+
         pose.popPose();
     }
 
