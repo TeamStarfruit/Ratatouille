@@ -1,0 +1,22 @@
+{
+  "type": "ratatouille:composting",
+  "ingredients": [
+    {
+      "item": "minecraft:rotten_flesh"
+    },
+    {
+      "item": "ratatouille:salt"
+    },
+    {
+      "amount": 50,
+      "fluid": "minecraft:water",
+      "nbt": {}
+    }
+  ],
+  "processingTime": 500,
+  "results": [
+    {
+      "item": "minecraft:leather"
+    }
+  ]
+}

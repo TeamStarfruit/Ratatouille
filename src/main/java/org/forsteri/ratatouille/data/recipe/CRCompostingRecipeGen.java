@@ -6,6 +6,7 @@ import com.simibubi.create.api.data.recipe.ProcessingRecipeGen;
 import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.data.PackOutput;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.material.Fluids;
 import net.minecraft.world.level.material.WaterFluid;
 import net.minecraftforge.common.Tags;
@@ -33,21 +34,27 @@ public class CRCompostingRecipeGen extends CompostingRecipeGen {
                     .duration(200)
                     .output(AllItems.DOUGH.get(),3)),
 
-            TEST1 = this.create("test1", b -> b
-                    .require(Fluids.WATER,50)
-                    .require(Tags.Fluids.MILK, 50)
-                    .require(Fluids.LAVA, 50)
-                    .duration(200)
-                    .output(AllFluids.HONEY.get(),150)),
+            LEATHER = this.create("leather", b -> b
+                    .require(Items.ROTTEN_FLESH)
+                    .require(CRItems.SALT.get())
+                    .require(Fluids.WATER, 50)
+                    .duration(500)
+                    .output(Items.LEATHER)),
 
-            TEST2 = this.create("test2", b -> b
-                    .require(Fluids.WATER,50)
-                    .require(Tags.Fluids.MILK, 50)
-                    .require(Fluids.LAVA, 50)
-                    .duration(200)
-                    .output(CRFluids.COMPOST_RESIDUE_FLUID.get(), 60)
-                    .output(CRFluids.COMPOST_TEA.get(), 30)
-                    .output(CRFluids.BIO_GAS.get(), 10))
+            FERMENTED_SPIDER_EYE = this.create("fermented_spider_eye", b -> b
+                    .require(Items.SPIDER_EYE)
+                    .require(Items.SUGAR)
+                    .require(Fluids.WATER, 50)
+                    .duration(500)
+                    .output(Items.FERMENTED_SPIDER_EYE)),
+
+            SLIME_BALL = this.create("slime_ball", b -> b
+                    .require(Items.KELP)
+                    .require(Items.KELP)
+                    .require(CRItems.SALT.get())
+                    .require(Fluids.WATER, 50)
+                    .duration(500)
+                    .output(Items.SLIME_BALL))
     ;
 
     public CRCompostingRecipeGen(PackOutput generator) {

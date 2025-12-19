@@ -1,0 +1,22 @@
+{
+  "type": "ratatouille:composting",
+  "ingredients": [
+    {
+      "item": "minecraft:spider_eye"
+    },
+    {
+      "item": "minecraft:sugar"
+    },
+    {
+      "amount": 50,
+      "fluid": "minecraft:water",
+      "nbt": {}
+    }
+  ],
+  "processingTime": 500,
+  "results": [
+    {
+      "item": "minecraft:fermented_spider_eye"
+    }
+  ]
+}
