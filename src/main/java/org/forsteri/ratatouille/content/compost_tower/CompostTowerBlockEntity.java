@@ -361,9 +361,6 @@ public class CompostTowerBlockEntity extends SmartBlockEntity implements IHaveGo
         var availFluid = controllerBE.tankInventory.getFluidAtBlockHeight(outputHeight, towerHeight);
 
         FluidStack fluidStack = new FluidStack(availFluid, 1);
-        if (fluidStack.isEmpty())
-            return false;
-
         CreateLang.fluidName(fluidStack)
                 .style(ChatFormatting.GRAY)
                 .forGoggles(tooltip, 1);
