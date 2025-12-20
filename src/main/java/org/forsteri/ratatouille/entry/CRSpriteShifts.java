@@ -33,7 +33,7 @@ public class CRSpriteShifts {
     }
 
     private static CTSpriteShiftEntry getCT(CTType type, String blockTextureName, String connectedTextureName) {
-        return CTSpriteShifter.getCT(type, Create.asResource("block/" + blockTextureName), Create.asResource("block/" + connectedTextureName + "_connected"));
+        return CTSpriteShifter.getCT(type, Ratatouille.asResource("block/" + blockTextureName), Ratatouille.asResource("block/" + connectedTextureName + "_connected"));
     }
 
     private static CTSpriteShiftEntry getCT(CTType type, String blockTextureName) {
