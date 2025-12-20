@@ -2,11 +2,13 @@ package org.forsteri.ratatouille.content.compost_tower;
 
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
+import com.simibubi.create.foundation.item.ItemHelper;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
+import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.forsteri.ratatouille.entry.CRRecipeTypes;
 import org.jetbrains.annotations.NotNull;
@@ -58,15 +60,21 @@ public class CompostingRecipe extends ProcessingRecipe<RecipeWrapper> {
     public static boolean match(CompostTowerBlockEntity controller, Recipe<?> recipe) {
         if (!(recipe instanceof CompostingRecipe compostingRecipe)) return false;
 
+        var testInv = new ItemStackHandler(controller.inputInventory.getSlots());
+        ItemHelper.copyContents(controller.inputInventory, testInv);
+
         for (var itemIngredient: compostingRecipe.getIngredients()) {
             boolean found = false;
-            for (int slot = 0; slot < controller.inputInventory.getSlots(); slot++) {
-                var stackInSlot = controller.inputInventory.getStackInSlot(slot);
+            for (int slot = 0; slot < testInv.getSlots(); slot++) {
+                var stackInSlot = testInv.getStackInSlot(slot);
 
                 for (var item: itemIngredient.getItems()) {
                     if (item.is(stackInSlot.getItem())
                             && stackInSlot.getCount() >= item.getCount()) {
                         found = true;
+                        testInv.setStackInSlot(slot, stackInSlot.copyWithCount(
+                                stackInSlot.getCount() - item.getCount()
+                        ));
                         break;
                     }
                 }
@@ -95,12 +103,12 @@ public class CompostingRecipe extends ProcessingRecipe<RecipeWrapper> {
 
     @Override
     protected int getMaxInputCount() {
-        return 3;
+        return 3 * 64;
     }
 
     @Override
     protected int getMaxOutputCount() {
-        return 3;
+        return 3 * 64;
     }
 
     @Override

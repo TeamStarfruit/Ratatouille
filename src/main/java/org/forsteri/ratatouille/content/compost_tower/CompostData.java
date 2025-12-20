@@ -240,6 +240,10 @@ public class CompostData {
             lastRecipe = list.get(0);
             timer = lastRecipe.getProcessingDuration();
             controller.notifyUpdate();
+        } else {
+            lastRecipe = null;
+            timer = 100;
+            controller.notifyUpdate();
         }
     }
 
