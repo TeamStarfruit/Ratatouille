@@ -8,6 +8,7 @@
     "ratatouille:irrigation_tower",
     "ratatouille:spreader",
     "ratatouille:frozen_block",
-    "ratatouille:compost_tower"
+    "ratatouille:compost_tower",
+    "ratatouille:fishpond_block"
   ]
 }

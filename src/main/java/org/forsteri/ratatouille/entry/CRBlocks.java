@@ -1,10 +1,10 @@
 package org.forsteri.ratatouille.entry;
 
+import com.simibubi.create.AllSpriteShifts;
+import com.simibubi.create.content.decoration.encasing.CasingBlock;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
-import com.simibubi.create.foundation.data.AssetLookup;
-import com.simibubi.create.foundation.data.BlockStateGen;
-import com.simibubi.create.foundation.data.CreateRegistrate;
-import com.simibubi.create.foundation.data.SharedProperties;
+import com.simibubi.create.foundation.data.*;
+import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
@@ -153,6 +153,13 @@ public class CRBlocks {
             .item(CompostTowerBlockItem::new)
             .model((c, p) -> p.withExistingParent(c.getName(), new ResourceLocation(Ratatouille.MOD_ID, "block/compost_tower/item")))
             .build()
+            .register();
+
+    @SuppressWarnings("removal")
+    public static final BlockEntry<CasingBlock> FISHPOND_BLOCK = Ratatouille.REGISTRATE
+            .block("fishpond_block", CasingBlock::new)
+            .properties((p) -> p.mapColor(MapColor.PODZOL))
+            .transform(BuilderTransformers.casing(() -> CRSpriteShifts.FISHPOND_BLOCK))
             .register();
 
 

@@ -26,7 +26,7 @@ public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
 
     private static final int SLOT = 18;
     private static final int COLUMNS = 3;
-    private static final int CENTER_Y = 54;
+    private static final int CENTER_Y = 57;
 
     private final AnimatedCompostTower tower = new AnimatedCompostTower();
     private final AnimatedBlazeBurner heater = new AnimatedBlazeBurner();

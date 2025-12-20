@@ -1,8 +1,10 @@
 package org.forsteri.ratatouille.entry;
 
+import com.simibubi.create.Create;
 import com.simibubi.create.foundation.block.connected.AllCTTypes;
 import com.simibubi.create.foundation.block.connected.CTSpriteShiftEntry;
 import com.simibubi.create.foundation.block.connected.CTSpriteShifter;
+import com.simibubi.create.foundation.block.connected.CTType;
 import net.minecraft.resources.ResourceLocation;
 import org.forsteri.ratatouille.Ratatouille;
 
@@ -18,7 +20,8 @@ public class CRSpriteShifts {
             COMPOST_TOWER_TOP_INNER = getCT("compost_tower/compost_tower_top_inner"),
             COMPOST_TOWER_BOTTOM = getCT("compost_tower/compost_tower_bottom"),
             COMPOST_TOWER_BOTTOM_INNER = getCT("compost_tower/compost_tower_bottom_inner"),
-            COMPOST_TOWER_SHIFT_2x2 = getCT("compost_tower/compost_tower", "compost_tower/compost_tower_2x2");
+            COMPOST_TOWER_SHIFT_2x2 = getCT("compost_tower/compost_tower", "compost_tower/compost_tower_2x2"),
+            FISHPOND_BLOCK = omni("fishpond_block");
 
     private static CTSpriteShiftEntry getCT(String blockTextureName, String connectedTextureName) {
         return CTSpriteShifter.getCT(AllCTTypes.RECTANGLE, new ResourceLocation(Ratatouille.MOD_ID, "block/" + blockTextureName),
@@ -27,6 +30,18 @@ public class CRSpriteShifts {
 
     private static CTSpriteShiftEntry getCT(String blockTextureName) {
         return getCT(blockTextureName, blockTextureName);
+    }
+
+    private static CTSpriteShiftEntry getCT(CTType type, String blockTextureName, String connectedTextureName) {
+        return CTSpriteShifter.getCT(type, Create.asResource("block/" + blockTextureName), Create.asResource("block/" + connectedTextureName + "_connected"));
+    }
+
+    private static CTSpriteShiftEntry getCT(CTType type, String blockTextureName) {
+        return getCT(type, blockTextureName, blockTextureName);
+    }
+
+    private static CTSpriteShiftEntry omni(String name) {
+        return getCT(AllCTTypes.OMNIDIRECTIONAL, name);
     }
 
     public CRSpriteShifts() {}
