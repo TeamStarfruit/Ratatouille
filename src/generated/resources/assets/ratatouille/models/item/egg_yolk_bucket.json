@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "ratatouille:item/egg_yolk_bucket"
+  }
+}
