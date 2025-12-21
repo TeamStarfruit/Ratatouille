@@ -55,6 +55,7 @@ public class CRItems {
     public static final ItemEntry<SequencedAssemblyItem> UNPROCESSED_MATURE_MATTER_FOLD = Ratatouille.REGISTRATE.item("unprocessed_mature_matter_fold", SequencedAssemblyItem::new).register();
     public static final ItemEntry<Item> MATURE_MATTER_FOLD = Ratatouille.REGISTRATE.item("mature_matter_fold", Item::new).register();
     public static final ItemEntry<Item> BOIL_STONE = Ratatouille.REGISTRATE.item("boil_stone", Item::new).register();
+    public static final ItemEntry<Item> FISH_FEED = Ratatouille.REGISTRATE.item("fish_feed", Item::new).register();
     public static final ItemEntry<CompostTeaBottleItem> COMPOST_TEA_BOTTLE =
             Ratatouille.REGISTRATE.item("compost_tea_bottle", CompostTeaBottleItem::new)
                     .properties(p -> p.stacksTo(16))
