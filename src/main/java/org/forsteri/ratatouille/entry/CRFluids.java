@@ -20,25 +20,33 @@ import java.util.function.Supplier;
 public class CRFluids {
     public static final FluidEntry<BaseFlowingFluid.Flowing> COCOA_LIQUOR =
             Ratatouille.REGISTRATE
-                    .standardFluid("cocoa_liquor", SolidRenderedPlaceableFluidType.create(6430752, () -> {
-                        return 0.1f;
-                    }))
-                    .lang("Cocoa Liquor")
-                    .register();
-    public static final FluidEntry<VirtualFluid> CAKE_BATTER =
+            .standardFluid("cocoa_liquor", SolidRenderedPlaceableFluidType.create(6430752, () -> {return 0.1f;}))
+            .lang("Cocoa Liquor")
+            .register();
+
+
+    public static final FluidEntry<BaseFlowingFluid.Flowing> CAKE_BATTER =
             Ratatouille.REGISTRATE
-                    .virtualFluid("cake_batter")
+                    .standardFluid("cake_batter")
                     .lang("Cake Batter")
+                    .source(BaseFlowingFluid.Source::new).block().build()
+                    .bucket(NoPlaceBucketItem::new).build()
                     .register();
-    public static final FluidEntry<VirtualFluid> MINCE_MEAT =
+
+    public static final FluidEntry<BaseFlowingFluid.Flowing> MINCE_MEAT =
             Ratatouille.REGISTRATE
-                    .virtualFluid("mince_meat")
+                    .standardFluid("mince_meat")
                     .lang("Mince Meat")
+                    .source(BaseFlowingFluid.Source::new).block().build()
+                    .bucket(NoPlaceBucketItem::new).build()
                     .register();
-    public static final FluidEntry<VirtualFluid> EGG_YOLK =
+
+    public static final FluidEntry<BaseFlowingFluid.Flowing> EGG_YOLK =
             Ratatouille.REGISTRATE
-                    .virtualFluid("egg_yolk")
+                    .standardFluid("egg_yolk")
                     .lang("Egg Yolk")
+                    .source(BaseFlowingFluid.Source::new).block().build()
+                    .bucket(NoPlaceBucketItem::new).build()
                     .register();
     public static final FluidEntry<BaseFlowingFluid.Flowing> COMPOST_TEA =
             Ratatouille.REGISTRATE
@@ -56,6 +64,7 @@ public class CRFluids {
                     .lang("Biogas")
                     .source(BaseFlowingFluid.Source::new).block().build()
                     .bucket(NoPlaceBucketItem::new).build().register();
+
     public static final FluidEntry<VirtualFluid> COMPOST_FLUID =
             Ratatouille.REGISTRATE
                     .virtualFluid("compost_fluid")
@@ -71,10 +80,15 @@ public class CRFluids {
                     .lang("Compost Residue Fluid")
                     .source(BaseFlowingFluid.Source::new).block().build()
                     .bucket().build().register();
-    public static final FluidEntry<VirtualFluid> MELON_JUICE_FLUID =
+
+    public static final FluidEntry<BaseFlowingFluid.Flowing> MELON_JUICE_FLUID =
             Ratatouille.REGISTRATE
-                    .virtualFluid("melon_juice_fluid")
+                    .standardFluid("melon_juice_fluid")
                     .lang("Melon Juice")
+                    .source(BaseFlowingFluid.Source::new).block().build()
+                    .bucket(NoPlaceBucketItem::new)
+                    .lang("Melon Juice Bucket")
+                    .build()
                     .register();
 
     static {
@@ -108,7 +122,6 @@ public class CRFluids {
             return NO_TINT;
         }
 
-        @Override
         public int getTintColor(FluidState state, BlockAndTintGetter world, BlockPos pos) {
             return 0x00ffffff;
         }
