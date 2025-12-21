@@ -26,22 +26,28 @@ public class CRFluids {
             .register();
 
 
-    public static final FluidEntry<VirtualFluid> CAKE_BATTER =
+    public static final FluidEntry<ForgeFlowingFluid.Flowing> CAKE_BATTER =
             Ratatouille.REGISTRATE
-                    .virtualFluid("cake_batter")
+                    .standardFluid("cake_batter")
                     .lang("Cake Batter")
+                    .source(ForgeFlowingFluid.Source::new).block().build()
+                    .bucket(NoPlaceBucketItem::new).build()
                     .register();
 
-    public static final FluidEntry<VirtualFluid> MINCE_MEAT =
+    public static final FluidEntry<ForgeFlowingFluid.Flowing> MINCE_MEAT =
             Ratatouille.REGISTRATE
-                    .virtualFluid("mince_meat")
+                    .standardFluid("mince_meat")
                     .lang("Mince Meat")
+                    .source(ForgeFlowingFluid.Source::new).block().build()
+                    .bucket(NoPlaceBucketItem::new).build()
                     .register();
 
-    public static final FluidEntry<VirtualFluid> EGG_YOLK =
+    public static final FluidEntry<ForgeFlowingFluid.Flowing> EGG_YOLK =
             Ratatouille.REGISTRATE
-                    .virtualFluid("egg_yolk")
+                    .standardFluid("egg_yolk")
                     .lang("Egg Yolk")
+                    .source(ForgeFlowingFluid.Source::new).block().build()
+                    .bucket(NoPlaceBucketItem::new).build()
                     .register();
 
     public static final FluidEntry<ForgeFlowingFluid.Flowing> COMPOST_TEA =
@@ -80,10 +86,14 @@ public class CRFluids {
                     .source(ForgeFlowingFluid.Source::new).block().build()
                     .bucket().build().register();
 
-    public static final FluidEntry<VirtualFluid> MELON_JUICE_FLUID =
+    public static final FluidEntry<ForgeFlowingFluid.Flowing> MELON_JUICE_FLUID =
             Ratatouille.REGISTRATE
-                    .virtualFluid("melon_juice_fluid")
+                    .standardFluid("melon_juice_fluid")
                     .lang("Melon Juice")
+                    .source(ForgeFlowingFluid.Source::new).block().build()
+                    .bucket(NoPlaceBucketItem::new)
+                    .lang("Melon Juice Bucket")
+                    .build()
                     .register();
 
 
