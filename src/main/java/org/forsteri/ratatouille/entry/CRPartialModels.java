@@ -12,6 +12,7 @@ public class CRPartialModels {
     public static final PartialModel MECHANICAL_DEMOLDER_HEAD = block("block/mechanical_demolder/head");
     public static final PartialModel CHEF_HAT = block("block/chef_hat");
     public static final PartialModel CHEF_HAT_WITH_GOGGLES = block("block/chef_hat_with_goggles");
+    public static final PartialModel AERATOR_BLADE = block("block/aerator/partial");
 
 
     private static PartialModel block(@SuppressWarnings("SameParameterValue") String path) {

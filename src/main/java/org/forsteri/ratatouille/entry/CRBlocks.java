@@ -8,10 +8,12 @@ import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
 import org.forsteri.ratatouille.Ratatouille;
+import org.forsteri.ratatouille.content.aerator.AeratorBlock;
 import org.forsteri.ratatouille.content.compost_tower.CompostTowerBlock;
 import org.forsteri.ratatouille.content.compost_tower.CompostTowerModel;
 import org.forsteri.ratatouille.content.compost_tower.CompostTowerBlockItem;
@@ -152,6 +154,20 @@ public class CRBlocks {
             .addLayer(() -> RenderType::cutoutMipped)
             .item(CompostTowerBlockItem::new)
             .model((c, p) -> p.withExistingParent(c.getName(), new ResourceLocation(Ratatouille.MOD_ID, "block/compost_tower/item")))
+            .build()
+            .register();
+
+    @SuppressWarnings("removal")
+    public static final BlockEntry<AeratorBlock> AERATOR_BLOCK = Ratatouille.REGISTRATE
+            .block("aerator", AeratorBlock::new)
+            .initialProperties(SharedProperties::stone)
+            .properties((p) -> p.mapColor(MapColor.PODZOL))
+            .transform(pickaxeOnly())
+            .transform(CRStress.setImpact(2.0))
+            .blockstate((c, p) -> p.simpleBlock((Block)c.getEntry(), AssetLookup.partialBaseModel(c, p, new String[0])))
+            .addLayer(() -> RenderType::cutoutMipped)
+            .item()
+            .model((c, p) -> p.withExistingParent(c.getName(), new ResourceLocation(Ratatouille.MOD_ID, "block/aerator/item")))
             .build()
             .register();
 

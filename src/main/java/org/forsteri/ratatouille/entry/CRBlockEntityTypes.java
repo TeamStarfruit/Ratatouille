@@ -2,6 +2,9 @@ package org.forsteri.ratatouille.entry;
 
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import org.forsteri.ratatouille.Ratatouille;
+import org.forsteri.ratatouille.content.aerator.AeratorBlockEntity;
+import org.forsteri.ratatouille.content.aerator.AeratorRenderer;
+import org.forsteri.ratatouille.content.aerator.AeratorVisual;
 import org.forsteri.ratatouille.content.compost_tower.CompostTowerBlockEntity;
 import org.forsteri.ratatouille.content.demolder.DemolderVisual;
 import org.forsteri.ratatouille.content.demolder.MechanicalDemolderBlockEntity;
@@ -82,6 +85,13 @@ public class CRBlockEntityTypes {
             .blockEntity("compost_tower", CompostTowerBlockEntity::new)
             .validBlock(CRBlocks.COMPOST_TOWER_BLOCK)
             .renderer(() -> CompostTowerRenderer::new)
+            .register();
+
+    public static final BlockEntityEntry<AeratorBlockEntity> AERATOR_BLOCK_ENTITY = Ratatouille.REGISTRATE
+            .blockEntity("aerator", AeratorBlockEntity::new)
+            .visual(() -> AeratorVisual::new)
+            .validBlock(CRBlocks.AERATOR_BLOCK)
+            .renderer(() -> AeratorRenderer::new)
             .register();
 
 
