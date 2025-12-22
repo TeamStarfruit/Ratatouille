@@ -10,7 +10,6 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
-import org.forsteri.ratatouille.content.oven_fan.OvenFanBlockEntity;
 import org.forsteri.ratatouille.entry.CRPartialModels;
 import org.jetbrains.annotations.Nullable;
 

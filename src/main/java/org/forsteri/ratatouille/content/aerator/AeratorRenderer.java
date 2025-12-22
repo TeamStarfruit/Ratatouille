@@ -14,7 +14,6 @@ import net.minecraft.client.renderer.RenderType;
 import net.minecraft.client.renderer.blockentity.BlockEntityRendererProvider;
 import net.minecraft.core.Direction;
 import net.minecraft.util.Mth;
-import org.forsteri.ratatouille.content.oven_fan.OvenFanBlockEntity;
 import org.forsteri.ratatouille.entry.CRPartialModels;
 
 import static net.minecraft.world.level.block.state.properties.BlockStateProperties.HORIZONTAL_FACING;
@@ -24,7 +23,7 @@ public class AeratorRenderer extends KineticBlockEntityRenderer<AeratorBlockEnti
         super(context);
     }
 
-    protected void renderSafe(OvenFanBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
+    protected void renderSafe(AeratorBlockEntity be, float partialTicks, PoseStack ms, MultiBufferSource buffer,
                               int light, int overlay) {
         if (VisualizationManager.supportsVisualization(be.getLevel())) return;
 

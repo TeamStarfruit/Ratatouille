@@ -27,7 +27,7 @@ public class AeratorBlock extends KineticBlock implements IBE<AeratorBlockEntity
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        return AllShapes.CASING_12PX.get(Direction.DOWN);
+        return AllShapes.CASING_12PX.get(Direction.UP);
     }
 
 
