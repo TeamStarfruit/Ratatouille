@@ -6,6 +6,7 @@ import com.simibubi.create.foundation.item.KineticStats;
 import com.simibubi.create.foundation.item.TooltipModifier;
 import net.createmod.catnip.lang.FontHelper;
 import net.createmod.catnip.lang.LangBuilder;
+import net.createmod.catnip.platform.CatnipServices;
 import net.createmod.ponder.foundation.PonderIndex;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -34,7 +35,6 @@ public class Ratatouille {
     public Ratatouille(IEventBus modEventBus, ModContainer modContainer) {
         ModLoadingContext modLoadingContext = ModLoadingContext.get();
         REGISTRATE.registerEventListeners(modEventBus);
-        modEventBus.addListener(Ratatouille::clientInit);
 
         CRCreativeModeTabs.register(modEventBus);
 
@@ -53,10 +53,16 @@ public class Ratatouille {
         modEventBus.addListener(this::init);
         modEventBus.addListener(EventPriority.HIGHEST, RatatouilleDataGen::gatherDataHighPriority);
         modEventBus.addListener(EventPriority.LOWEST, RatatouilleDataGen::gatherData);
+        CatnipServices.PLATFORM.executeOnClientOnly(() -> () -> onClient(modEventBus, modContainer));
+    }
+
+
+    public static void onClient(IEventBus modEventBus, ModContainer container) {
+        CRPartialModels.init();
+        modEventBus.addListener(Ratatouille::clientInit);
     }
 
     public static void clientInit(final FMLClientSetupEvent event) {
-        CRPartialModels.init();
         PonderIndex.addPlugin(new CRPonderPlugin());
     }
 
