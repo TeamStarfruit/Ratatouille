@@ -120,6 +120,9 @@ public class OvenModel extends CTModel {
         }
 
         boolean isCulled(Direction face) {
+            if (face == null) {
+                return culledFaces[6];
+            }
             return culledFaces[face.get3DDataValue()];
         }
     }
