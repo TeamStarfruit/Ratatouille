@@ -104,19 +104,26 @@ public class CompostTowerModel extends CTModel {
     }
 
     private static class CullData {
-        Map<Direction, Boolean> culledFaces = new HashMap<>();
+        boolean[] culledFaces;
 
         public CullData() {
-            for (Direction d : Iterate.directions)
-                culledFaces.put(d, false);
+            culledFaces = new boolean[7];
+            Arrays.fill(culledFaces, false);
         }
 
         void setCulled(Direction face, boolean cull) {
-            culledFaces.put(face, cull);
+            if (face == null) {
+                culledFaces[6] = cull;
+                return;
+            }
+            culledFaces[face.get3DDataValue()] = cull;
         }
 
         boolean isCulled(Direction face) {
-            return culledFaces.get(face);
+            if (face == null) {
+                return culledFaces[6];
+            }
+            return culledFaces[face.get3DDataValue()];
         }
     }
 
