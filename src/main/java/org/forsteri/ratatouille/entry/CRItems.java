@@ -74,7 +74,7 @@ public class CRItems {
     //public static final ItemEntry<Item> SUGAR_CUBE = Ratatouille.REGISTRATE.item("sugar_cube", Item::new).register();
     //public static final ItemEntry<Item> VANILLA_POWDER = Ratatouille.REGISTRATE.item("vanilla_powder", Item::new).register();
     //public static final ItemEntry<Item> ICE_CRYSTAL = Ratatouille.REGISTRATE.item("ice_crystal", Item::new).register();
-    public static final ItemEntry<Item> ZINC_PLATE = Ratatouille.REGISTRATE.item("zinc_plate", Item::new).register();
+//    public static final ItemEntry<Item> ZINC_PLATE = Ratatouille.REGISTRATE.item("zinc_plate", Item::new).register();
     public static void register() {
     }
 }
