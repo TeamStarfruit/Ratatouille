@@ -3,7 +3,6 @@ package org.forsteri.ratatouille.compat.jei.category;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.compat.jei.category.CreateRecipeCategory;
 import com.simibubi.create.compat.jei.category.animations.AnimatedBlazeBurner;
-import com.simibubi.create.content.processing.recipe.HeatCondition;
 import com.simibubi.create.foundation.gui.AllGuiTextures;
 import com.simibubi.create.foundation.item.ItemHelper;
 import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
@@ -21,9 +20,14 @@ import org.forsteri.ratatouille.compat.jei.category.animations.AnimatedCompostTo
 import org.forsteri.ratatouille.content.compost_tower.CompostingRecipe;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
+
+    private static final int SLOT = 18;
+    private static final int COLUMNS = 3;
+    private static final int CENTER_Y = 57;
 
     private final AnimatedCompostTower tower = new AnimatedCompostTower();
     private final AnimatedBlazeBurner heater = new AnimatedBlazeBurner();
@@ -34,64 +38,131 @@ public class CompostingCategory extends CreateRecipeCategory<CompostingRecipe> {
 
     @Override
     public void setRecipe(IRecipeLayoutBuilder builder, CompostingRecipe recipe, IFocusGroup focuses) {
-        List<Pair<Ingredient, MutableInt>> condensed = ItemHelper.condenseIngredients(recipe.getIngredients());
-        int size = condensed.size();
-        int xOffset = size < 3 ? (3 - size) * 19 / 2 : 0;
+        List<SlotEntry> inputs = new ArrayList<>();
 
-        int i = 0;
-        for (Pair<Ingredient, MutableInt> pair : condensed) {
+        for (Pair<Ingredient, MutableInt> pair : ItemHelper.condenseIngredients(recipe.getIngredients())) {
             List<ItemStack> stacks = new ArrayList<>();
             for (ItemStack is : pair.getFirst().getItems()) {
                 ItemStack copy = is.copy();
                 copy.setCount(pair.getSecond().getValue());
                 stacks.add(copy);
             }
-            builder.addSlot(RecipeIngredientRole.INPUT, 5 + xOffset + (i % 3) * 19, 51 - (i / 3) * 19)
-                    .setBackground(getRenderedSlot(), -1, -1)
-                    .addItemStacks(stacks);
-            i++;
+            inputs.add(SlotEntry.item(stacks));
         }
 
-        List<FluidStack> outputs = recipe.getFluidResults();
-        int outSize = outputs.size();
-        int j = 0;
-        for (FluidStack fluid : outputs) {
-            int x = 142 - (outSize % 2 != 0 && j == outSize - 1 ? 0 : j % 2 == 0 ? 10 : -9);
-            int y = -19 * (j / 2) + 51;
-            addFluidOutputSlot(builder, x, y, fluid);
-            j++;
-        }
+        recipe.getFluidIngredients()
+                .forEach(fi -> Arrays.stream(fi.getFluids())
+                        .forEach(fs -> inputs.add(SlotEntry.fluid(fs))));
+
+        List<SlotEntry> outputs = new ArrayList<>();
+
+        recipe.getRollableResults()
+                .forEach(r -> outputs.add(SlotEntry.item(List.of(r.getStack()))));
+
+        recipe.getFluidResults()
+                .forEach(fs -> outputs.add(SlotEntry.fluid(fs)));
+
+        int bgWidth = getBackground().getWidth();
+        int padding = 8;
+
+        int inputX = padding;
+        int outputX = bgWidth - (COLUMNS * SLOT) - padding;
+
+        layoutMixedSlots(builder, inputs, RecipeIngredientRole.INPUT, inputX);
+        layoutMixedSlots(builder, outputs, RecipeIngredientRole.OUTPUT, outputX);
     }
 
-    private void addFluidOutputSlot(IRecipeLayoutBuilder builder, int x, int y, FluidStack stack) {
-        builder.addSlot(RecipeIngredientRole.OUTPUT, x, y)
-                .setBackground(getRenderedSlot(), -1, -1)
-                .setFluidRenderer(stack.getAmount(), false, 16, 16)
-                .addIngredient(NeoForgeTypes.FLUID_STACK, stack);
+    private void layoutMixedSlots(
+            IRecipeLayoutBuilder builder,
+            List<SlotEntry> entries,
+            RecipeIngredientRole role,
+            int baseX
+    ) {
+        int rows = (int) Math.ceil(entries.size() / (double) COLUMNS);
+        int startY = CENTER_Y - (rows * SLOT) / 2;
+
+        for (int row = 0; row < rows; row++) {
+            int rowStart = row * COLUMNS;
+            int rowEnd = Math.min(rowStart + COLUMNS, entries.size());
+            int countInRow = rowEnd - rowStart;
+
+            int rowWidth = countInRow * SLOT;
+            int startX = baseX + (COLUMNS * SLOT - rowWidth) / 2;
+
+            for (int i = 0; i < countInRow; i++) {
+                int index = rowStart + i;
+                int x = startX + i * SLOT;
+                int y = startY + row * SLOT;
+
+                SlotEntry entry = entries.get(index);
+
+                var slot = builder.addSlot(role, x, y)
+                        .setBackground(getRenderedSlot(), -1, -1);
+
+                if (entry.isFluid()) {
+                    FluidStack fs = entry.fluid;
+                    slot.setFluidRenderer(fs.getAmount(), false, 16, 16)
+                            .addIngredient(NeoForgeTypes.FLUID_STACK, fs);
+                } else {
+                    slot.addItemStacks(entry.items);
+                }
+            }
+        }
     }
 
     @Override
-    public void draw(CompostingRecipe recipe, IRecipeSlotsView view, GuiGraphics g, double mouseX, double mouseY) {
-        PoseStack stack = g.pose();
+    public void draw(
+            CompostingRecipe recipe,
+            IRecipeSlotsView view,
+            GuiGraphics g,
+            double mouseX,
+            double mouseY
+    ) {
+        PoseStack pose = g.pose();
+        int centerX = getBackground().getWidth() / 2;
 
-        renderWidgets(g, recipe, mouseX, mouseY);
-        stack.pushPose();
-        stack.translate(75, -15, 0);
-        stack.pushPose();
-        stack.translate(0, 20, -7);
-        heater.withHeat(HeatCondition.HEATED.visualizeAsBlazeBurner())
-                .draw(g);
-        stack.popPose();
+        pose.pushPose();
+        pose.translate(centerX - 10, -15, 0);
+
+        getBlockShadow().render(g, -17, 54);
+        AllGuiTextures.JEI_ARROW.render(g, -11, 66);
+
+        pose.pushPose();
+        pose.translate(-6, 20, -7);
+        heater.withHeat(recipe.getRequiredHeat().visualizeAsBlazeBurner()).draw(g);
+        pose.popPose();
+
+        pose.pushPose();
+        pose.translate(-6, 0, 0);
         tower.draw(g);
-        stack.popPose();
-    }
+        pose.popPose();
 
-    protected void renderWidgets(GuiGraphics graphics, CompostingRecipe recipe, double mouseX, double mouseY) {
-        getBlockShadow().render(graphics, 65, 39);
-        AllGuiTextures.JEI_LONG_ARROW.render(graphics, 54, 51);
+        pose.popPose();
     }
 
     protected AllGuiTextures getBlockShadow() {
         return AllGuiTextures.JEI_LIGHT;
+    }
+
+    private static class SlotEntry {
+        final List<ItemStack> items;
+        final FluidStack fluid;
+
+        private SlotEntry(List<ItemStack> items, FluidStack fluid) {
+            this.items = items;
+            this.fluid = fluid;
+        }
+
+        static SlotEntry item(List<ItemStack> stacks) {
+            return new SlotEntry(stacks, null);
+        }
+
+        static SlotEntry fluid(FluidStack stack) {
+            return new SlotEntry(null, stack);
+        }
+
+        boolean isFluid() {
+            return fluid != null;
+        }
     }
 }

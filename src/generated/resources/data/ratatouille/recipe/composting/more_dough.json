@@ -1,0 +1,23 @@
+{
+  "type": "ratatouille:composting",
+  "ingredients": [
+    {
+      "item": "create:dough"
+    },
+    {
+      "item": "create:wheat_flour"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 100,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "processing_time": 200,
+  "results": [
+    {
+      "count": 3,
+      "id": "create:dough"
+    }
+  ]
+}

@@ -35,17 +35,20 @@ public class CompostTowerBlockItem extends BlockItem {
     @Override
     protected boolean updateCustomBlockEntityTag(@NotNull BlockPos pos, Level level, Player player,
                                                  @NotNull ItemStack stack, @NotNull BlockState state) {
-        MinecraftServer minecraftserver = level.getServer();
-        if (minecraftserver == null)
+        MinecraftServer server = level.getServer();
+        if (server == null)
             return false;
-        CustomData blockEntityData = stack.get(DataComponents.BLOCK_ENTITY_DATA);
-        if (blockEntityData != null) {
-            CompoundTag nbt = blockEntityData.copyTag();
+
+        CustomData data = stack.get(DataComponents.BLOCK_ENTITY_DATA);
+        if (data != null) {
+            CompoundTag nbt = data.copyTag();
             nbt.remove("Size");
             nbt.remove("Height");
             nbt.remove("Controller");
             nbt.remove("LastKnownPos");
+            stack.set(DataComponents.BLOCK_ENTITY_DATA, CustomData.of(nbt));
         }
+
         return super.updateCustomBlockEntityTag(pos, level, player, stack, state);
     }
 
@@ -55,9 +58,11 @@ public class CompostTowerBlockItem extends BlockItem {
             return;
         if (player.isShiftKeyDown())
             return;
+
         Direction face = ctx.getClickedFace();
         if (!face.getAxis().isVertical())
             return;
+
         ItemStack stack = ctx.getItemInHand();
         Level world = ctx.getLevel();
         BlockPos pos = ctx.getClickedPos();
@@ -66,12 +71,14 @@ public class CompostTowerBlockItem extends BlockItem {
 
         if (!(placedOnState.getBlock() instanceof CompostTowerBlock))
             return;
+
         CompostTowerBlockEntity towerAt = ConnectivityHandler.partAt(
                 CRBlockEntityTypes.COMPOST_TOWER_BLOCK_ENTITY.get(), world, placedOnPos
         );
         if (towerAt == null)
             return;
-        CompostTowerBlockEntity controllerBE = (CompostTowerBlockEntity) towerAt.getControllerBE();
+
+        CompostTowerBlockEntity controllerBE = towerAt.getControllerBE();
         if (controllerBE == null)
             return;
 
@@ -80,15 +87,16 @@ public class CompostTowerBlockItem extends BlockItem {
             return;
 
         int tanksToPlace = 0;
-        BlockPos startPos = face == Direction.DOWN ? controllerBE.getBlockPos().below()
+        BlockPos startPos = face == Direction.DOWN
+                ? controllerBE.getBlockPos().below()
                 : controllerBE.getBlockPos().above(controllerBE.getHeight());
 
         if (startPos.getY() != pos.getY())
             return;
 
-        for (int xOffset = 0; xOffset < width; xOffset++) {
-            for (int zOffset = 0; zOffset < width; zOffset++) {
-                BlockPos offsetPos = startPos.offset(xOffset, 0, zOffset);
+        for (int x = 0; x < width; x++) {
+            for (int z = 0; z < width; z++) {
+                BlockPos offsetPos = startPos.offset(x, 0, z);
                 BlockState blockState = world.getBlockState(offsetPos);
                 if (blockState.getBlock() instanceof CompostTowerBlock)
                     continue;
@@ -101,12 +109,13 @@ public class CompostTowerBlockItem extends BlockItem {
         if (!player.isCreative() && stack.getCount() < tanksToPlace)
             return;
 
-        for (int xOffset = 0; xOffset < width; xOffset++) {
-            for (int zOffset = 0; zOffset < width; zOffset++) {
-                BlockPos offsetPos = startPos.offset(xOffset, 0, zOffset);
+        for (int x = 0; x < width; x++) {
+            for (int z = 0; z < width; z++) {
+                BlockPos offsetPos = startPos.offset(x, 0, z);
                 BlockState blockState = world.getBlockState(offsetPos);
                 if (blockState.getBlock() instanceof CompostTowerBlock)
                     continue;
+
                 BlockPlaceContext context = BlockPlaceContext.at(ctx, offsetPos, face);
                 player.getPersistentData().putBoolean("SilenceTankSound", true);
                 super.place(context);

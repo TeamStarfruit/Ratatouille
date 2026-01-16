@@ -1,0 +1,25 @@
+{
+  "type": "ratatouille:composting",
+  "ingredients": [
+    {
+      "item": "minecraft:kelp"
+    },
+    {
+      "item": "minecraft:kelp"
+    },
+    {
+      "item": "ratatouille:salt"
+    },
+    {
+      "type": "neoforge:single",
+      "amount": 50,
+      "fluid": "minecraft:water"
+    }
+  ],
+  "processing_time": 500,
+  "results": [
+    {
+      "id": "minecraft:slime_ball"
+    }
+  ]
+}

@@ -44,6 +44,7 @@
   "item.ratatouille.compost_residue_fluid_bucket": "堆肥渣液桶",
   "item.ratatouille.compost_tea_bottle": "堆肥茶瓶",
   "item.ratatouille.compost_tea_bottle.tooltip.summary": "植物催熟剂，可使用 3 次",
+  "ratatouille.gui.goggles.current_layer_fluid_output": "当前层流体输出",
   "item.ratatouille.compost_tea_bucket": "堆肥茶桶",
   "item.ratatouille.dried_cocoa_beans": "干可可豆",
   "item.ratatouille.dried_cocoa_nibs": "干可可碎",
