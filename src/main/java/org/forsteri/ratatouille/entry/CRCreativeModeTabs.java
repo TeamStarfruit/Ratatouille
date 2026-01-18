@@ -75,6 +75,10 @@ public class CRCreativeModeTabs {
             exclusions.add(CRItems.UNPROCESSED_RIPEN_MATTER_FOLD.get());
             exclusions.add(CRItems.UNPROCESSED_MATURE_MATTER_FOLD.get());
 
+            //1.3.8
+            exclusions.add(CRBlocks.AERATOR_BLOCK.asItem());
+            exclusions.add(CRBlocks.FISHPOND_BLOCK.asItem());
+
             return exclusions::contains;
         }
 
