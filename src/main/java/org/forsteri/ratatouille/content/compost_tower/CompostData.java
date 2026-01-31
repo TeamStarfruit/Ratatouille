@@ -1,5 +1,6 @@
 package org.forsteri.ratatouille.content.compost_tower;
 
+import com.simibubi.create.api.boiler.BoilerHeater;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
@@ -60,12 +61,9 @@ public class CompostData {
                 BlockPos pos = controllerPos.offset(xOffset, -1, zOffset);
                 BlockState blockState = level.getBlockState(pos);
 
-                if (blockState.getBlock() instanceof BlazeBurnerBlock
-                        || blockState.hasProperty(BlazeBurnerBlock.HEAT_LEVEL)) {
-
-                    float heat = BoilerHeaters.blazeBurner(level, pos, blockState);
-                    if (heat > 0)
-                        tempLevel += heat;
+                float heat = BoilerHeater.findHeat(level, pos, blockState);
+                if (heat > 0) {
+                    tempLevel += (int) heat;
                 }
             }
         }
