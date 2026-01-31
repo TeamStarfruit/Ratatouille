@@ -1,6 +1,8 @@
 package org.forsteri.ratatouille.content.oven;
 
+import com.simibubi.create.api.boiler.BoilerHeater;
 import com.simibubi.create.content.fluids.tank.BoilerHeaters;
+import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import joptsimple.internal.Strings;
 import net.minecraft.ChatFormatting;
@@ -49,12 +51,9 @@ public class BakeData {
                 BlockPos pos = controllerPos.offset(xOffset, -1, zOffset);
                 BlockState blockState = level.getBlockState(pos);
 
-                if (blockState.getBlock() instanceof BlazeBurnerBlock
-                        || blockState.hasProperty(BlazeBurnerBlock.HEAT_LEVEL)) {
-
-                    float heat = BoilerHeaters.blazeBurner(level, pos, blockState);
-                    if (heat > 0)
-                        tempLevel += heat;
+                float heat = BoilerHeater.findHeat(level, pos, blockState);
+                if (heat > 0) {
+                    tempLevel += (int) heat;
                 }
             }
         }
