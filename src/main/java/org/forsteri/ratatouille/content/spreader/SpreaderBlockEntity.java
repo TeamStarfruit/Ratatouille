@@ -11,6 +11,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.animal.Animal;
@@ -266,7 +267,7 @@ public class SpreaderBlockEntity  extends KineticBlockEntity implements IAirCurr
                                     && growable.isValidBonemealTarget(level, corpPos, corpState, false)
                                     && ForgeHooks.onCropsGrowPre(level, corpPos, corpState, true)
                             ) {
-                                growable.performBonemeal(level.getServer().overworld(), level.random, corpPos, corpState);
+                                growable.performBonemeal((ServerLevel) level, level.random, corpPos, corpState);
                                 level.levelEvent(2005, corpPos, 0);
                                 ForgeHooks.onCropsGrowPost(level, corpPos, corpState);
                             }
