@@ -60,6 +60,7 @@ public class Ratatouille {
     public static void onClient(IEventBus modEventBus, ModContainer container) {
         CRPartialModels.init();
         modEventBus.addListener(Ratatouille::clientInit);
+        modEventBus.addListener(CRParticleTypes::registerFactories);
     }
 
     public static void clientInit(final FMLClientSetupEvent event) {
