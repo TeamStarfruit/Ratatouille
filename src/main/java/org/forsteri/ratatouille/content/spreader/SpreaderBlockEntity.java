@@ -12,6 +12,7 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.util.Mth;
 import net.minecraft.world.entity.AgeableMob;
 import net.minecraft.world.entity.animal.Animal;
@@ -27,6 +28,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.neoforged.neoforge.capabilities.Capabilities;
 import net.neoforged.neoforge.capabilities.RegisterCapabilitiesEvent;
+import net.neoforged.neoforge.common.CommonHooks;
 import net.neoforged.neoforge.items.IItemHandler;
 import net.neoforged.neoforge.items.IItemHandlerModifiable;
 import net.neoforged.neoforge.items.ItemStackHandler;
@@ -194,11 +196,11 @@ public class SpreaderBlockEntity extends KineticBlockEntity implements IAirCurre
                             BlockState corpState = level.getBlockState(corpPos);
                             if (corpState.getBlock() instanceof BonemealableBlock growable
                                     && growable.isValidBonemealTarget(level, corpPos, corpState)
-//                                    && ForgeHook.onCropsGrowPre(level, corpPos, corpState, true)
+                                    && CommonHooks.canCropGrow(level, corpPos, corpState, true)
                             ) {
-                                growable.performBonemeal(level.getServer().overworld(), level.random, corpPos, corpState);
-                                level.levelEvent(2005, corpPos, 0);
-//                                ForgeHooks.onCropsGrowPost(level, corpPos, corpState);
+                                growable.performBonemeal((ServerLevel) level, level.random, corpPos, corpState);
+                                level.levelEvent(1505, corpPos, 15);
+                                CommonHooks.fireCropGrowPost(level, corpPos, corpState);
                             }
                             count--;
                         }
