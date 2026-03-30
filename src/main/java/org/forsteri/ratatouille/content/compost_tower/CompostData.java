@@ -1,8 +1,6 @@
 package org.forsteri.ratatouille.content.compost_tower;
 
 import com.simibubi.create.api.boiler.BoilerHeater;
-import com.simibubi.create.content.fluids.tank.BoilerHeaters;
-import com.simibubi.create.content.processing.burner.BlazeBurnerBlock;
 import com.simibubi.create.foundation.recipe.RecipeFinder;
 import com.simibubi.create.foundation.recipe.trie.AbstractVariant;
 import com.simibubi.create.foundation.recipe.trie.RecipeTrie;
@@ -14,14 +12,9 @@ import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.util.Mth;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.state.BlockState;
-import net.minecraftforge.fluids.FluidStack;
-import net.minecraftforge.fluids.capability.IFluidHandler;
-import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
 import org.forsteri.ratatouille.util.Lang;
 import org.jetbrains.annotations.NotNull;
 
@@ -75,16 +68,12 @@ public class CompostData {
 
         assert controller.getLevel() != null;
 
-        var inputInventory = controller.inputInventory;
-        var fluidHandler = controller.tankInventory;
-
         if (timer > 0) {
             timer -= getProcessingSpeed();
             if (controller.getLevel().isClientSide) return;
 
             if (timer <= 0) {
-                if (!CompostingRecipe.match(controller, lastRecipe)
-                        || !canOutput(inputInventory, fluidHandler)) {
+                if (!CompostingRecipe.match(controller, lastRecipe)) {
                     updateLastRecipe(controller);
                     return;
                 }
@@ -95,22 +84,6 @@ public class CompostData {
         } else  {
             updateLastRecipe(controller);
         }
-    }
-
-    private boolean canOutput(ItemStackHandler outputInventory, IFluidHandler fluidHandler) {
-        for (ItemStack outputStack : lastRecipe.rollResults()) {
-            if (outputStack.isEmpty()) continue;
-            if (!ItemHandlerHelper.insertItemStacked(outputInventory, outputStack, true).isEmpty()) {
-                return false;
-            }
-        }
-        for (FluidStack fluidStack : lastRecipe.getFluidResults()) {
-            if (fluidStack.isEmpty()) continue;
-            if (fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) < fluidStack.getAmount()) {
-                return false;
-            }
-        }
-        return true;
     }
 
     public boolean evaluate(CompostTowerBlockEntity tower) {
@@ -246,7 +219,7 @@ public class CompostData {
     }
 
     private boolean matchStaticFilters(Recipe<?> recipe) {
-        return true;
+        return recipe instanceof CompostingRecipe;
     }
 
     protected Object getRecipeCacheKey() {

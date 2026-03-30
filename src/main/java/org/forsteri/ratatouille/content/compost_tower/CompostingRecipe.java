@@ -2,13 +2,14 @@ package org.forsteri.ratatouille.content.compost_tower;
 
 import com.simibubi.create.content.processing.recipe.ProcessingRecipe;
 import com.simibubi.create.content.processing.recipe.ProcessingRecipeBuilder;
-import com.simibubi.create.foundation.item.ItemHelper;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.level.Level;
+import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
 import net.minecraftforge.items.ItemHandlerHelper;
-import net.minecraftforge.items.ItemStackHandler;
 import net.minecraftforge.items.wrapper.RecipeWrapper;
 import org.forsteri.ratatouille.entry.CRRecipeTypes;
 import org.jetbrains.annotations.NotNull;
@@ -58,28 +59,27 @@ public class CompostingRecipe extends ProcessingRecipe<RecipeWrapper> {
     }
 
     public static boolean match(CompostTowerBlockEntity controller, Recipe<?> recipe) {
-        if (!(recipe instanceof CompostingRecipe compostingRecipe)) return false;
+        if (!(recipe instanceof CompostingRecipe compostingRecipe))
+            return false;
 
-        var testInv = new ItemStackHandler(controller.inputInventory.getSlots());
-        ItemHelper.copyContents(controller.inputInventory, testInv);
+        IItemHandler itemHandler = controller.inputInventory;
+        int[] extractedItemsFromSlot = new int[itemHandler.getSlots()];
 
-        for (var itemIngredient: compostingRecipe.getIngredients()) {
+        for (Ingredient itemIngredient: compostingRecipe.getIngredients()) {
             boolean found = false;
-            for (int slot = 0; slot < testInv.getSlots(); slot++) {
-                var stackInSlot = testInv.getStackInSlot(slot);
+            for (int slot = 0; slot < itemHandler.getSlots(); slot++) {
+                ItemStack stackInSlot = itemHandler.getStackInSlot(slot);
+                if (stackInSlot.getCount() <= extractedItemsFromSlot[slot])
+                    continue;
 
-                for (var item: itemIngredient.getItems()) {
-                    if (item.is(stackInSlot.getItem())
-                            && stackInSlot.getCount() >= item.getCount()) {
-                        found = true;
-                        testInv.setStackInSlot(slot, stackInSlot.copyWithCount(
-                                stackInSlot.getCount() - item.getCount()
-                        ));
-                        break;
-                    }
+                if (itemIngredient.test(stackInSlot)) {
+                    extractedItemsFromSlot[slot]++;
+                    found = true;
+                    break;
                 }
             }
-            if (!found) return false;
+            if (!found)
+                return false;
         }
 
         for (var fluidIngredient: compostingRecipe.getFluidIngredients()) {
@@ -95,7 +95,7 @@ public class CompostingRecipe extends ProcessingRecipe<RecipeWrapper> {
             if (!found) return false;
         }
 
-        return true;
+        return compostingRecipe.canOutput(controller.outputInventory, controller.tankInventory);
     }
     public CompostingRecipe(ProcessingRecipeBuilder.ProcessingRecipeParams params) {
         super(CRRecipeTypes.COMPOSTING, params);
@@ -130,5 +130,21 @@ public class CompostingRecipe extends ProcessingRecipe<RecipeWrapper> {
             }
         }
         return false;
+    }
+
+    public boolean canOutput(IItemHandler outputInventory, IFluidHandler fluidHandler) {
+        for (ItemStack outputStack : rollResults()) {
+            if (outputStack.isEmpty()) continue;
+            if (!ItemHandlerHelper.insertItemStacked(outputInventory, outputStack, true).isEmpty()) {
+                return false;
+            }
+        }
+        for (FluidStack fluidStack : getFluidResults()) {
+            if (fluidStack.isEmpty()) continue;
+            if (fluidHandler.fill(fluidStack, IFluidHandler.FluidAction.SIMULATE) < fluidStack.getAmount()) {
+                return false;
+            }
+        }
+        return true;
     }
 }
