@@ -16,13 +16,14 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.List;
 
 @Mixin(value = NozzleBlockEntity.class, remap = false)
-public class NozzleBlockEntityMixin extends SmartBlockEntity {
+public abstract class NozzleBlockEntityMixin extends SmartBlockEntity {
 
     @Shadow
     private BlockPos fanPos;
@@ -31,18 +32,11 @@ public class NozzleBlockEntityMixin extends SmartBlockEntity {
         super(pType, pPos, pBlockState);
     }
 
-    @Override
-    public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
-
-    }
-
-    @Redirect(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V"), remap = true)
-    private void tick(Level instance, ParticleOptions pParticleData, double pX, double pY, double pZ, double pXSpeed, double pYSpeed, double pZSpeed) {
-        if (fanPos != null && instance.getBlockEntity(fanPos) instanceof SpreaderBlockEntity be) {
-            instance.addParticle(new SpreaderParticleData(be.getParticleColor()), pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
-        } else {
-            instance.addParticle(ParticleTypes.POOF, pX, pY, pZ, pXSpeed, pYSpeed, pZSpeed);
-        }
+    @ModifyArg(method = "tick", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;addParticle(Lnet/minecraft/core/particles/ParticleOptions;DDDDDD)V"), remap = true)
+    public ParticleOptions modifyParticle(ParticleOptions original) {
+        if (getLevel() != null && fanPos != null && getLevel().getBlockEntity(fanPos) instanceof SpreaderBlockEntity be)
+            return new SpreaderParticleData(be.getParticleColor());
+        return original;
     }
 
     @Inject(method = "lazyTick", at = @At("HEAD"), cancellable = true)
