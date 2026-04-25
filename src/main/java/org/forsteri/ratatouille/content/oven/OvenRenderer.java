@@ -24,7 +24,7 @@ public class OvenRenderer extends SafeBlockEntityRenderer<OvenBlockEntity> {
         float scale = 1.25f;
         ms.scale(scale, scale, scale);
 
-        DepotRenderer.renderItem(be.getLevel(), ms, bufferSource, light, OverlayTexture.NO_OVERLAY, be.inventory.getStackInSlot(0), 0, (Random)null, Vec3.atCenterOf(be.getBlockPos()), true);
+        DepotRenderer.renderItem(ms, bufferSource, light, OverlayTexture.NO_OVERLAY, be.inventory.getStackInSlot(0), 0, (Random)null, Vec3.atCenterOf(be.getBlockPos()), true);
         ms.popPose();
     }
 }
