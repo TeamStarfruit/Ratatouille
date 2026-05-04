@@ -6,7 +6,7 @@
       "item": "ratatouille:compost_residue"
     },
     {
-      "item": "ratatouille:salt"
+      "tag": "c:salts"
     },
     {
       "type": "neoforge:single",

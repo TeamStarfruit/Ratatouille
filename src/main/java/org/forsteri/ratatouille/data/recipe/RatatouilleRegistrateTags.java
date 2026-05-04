@@ -11,10 +11,12 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.Tags;
+import org.checkerframework.checker.units.qual.C;
 import org.forsteri.ratatouille.Ratatouille;
 import org.forsteri.ratatouille.entry.CRItems;
 import org.forsteri.ratatouille.entry.CRTags;
 import vectorwing.farmersdelight.common.registry.ModItems;
+import net.neoforged.neoforge.common.Tags;
 
 public class RatatouilleRegistrateTags {
     public static void addGenerators() {
@@ -31,6 +33,8 @@ public class RatatouilleRegistrateTags {
     private static void genItemTags(RegistrateTagsProvider<Item> provIn) {
         TagGen.CreateTagsProvider<Item> prov = new TagGen.CreateTagsProvider<>(provIn, Item::builtInRegistryHolder);
 
+       prov.tag(CRTags.SALTS)
+                .add(CRItems.SALT.get());
         prov.tag(CRTags.MOLD)
                 .add(
                         CRItems.CAKE_MOLD.get(),

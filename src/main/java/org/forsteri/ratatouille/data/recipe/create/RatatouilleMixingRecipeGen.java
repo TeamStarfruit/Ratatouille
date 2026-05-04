@@ -1,5 +1,6 @@
 package org.forsteri.ratatouille.data.recipe.create;
 
+import com.simibubi.create.AllItems;
 import com.simibubi.create.api.data.recipe.MixingRecipeGen;
 import com.simibubi.create.content.processing.recipe.HeatCondition;
 import net.minecraft.core.HolderLookup;
@@ -12,6 +13,7 @@ import org.forsteri.ratatouille.entry.CRFluids;
 import org.forsteri.ratatouille.entry.CRItems;
 import org.forsteri.ratatouille.entry.CRTags;
 import vectorwing.farmersdelight.common.registry.ModItems;
+import org.forsteri.ratatouille.entry.CRTags;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -48,7 +50,7 @@ public class RatatouilleMixingRecipeGen extends MixingRecipeGen {
 
     MINCE_MEAT = create("mince_meat", b -> b
             .require(CRTags.RAW_MEAT)
-            .require(CRItems.SALT.get())
+            .require(CRTags.SALTS)
             .output(CRFluids.MINCE_MEAT.get(), 250)
     ),
 
@@ -71,7 +73,7 @@ public class RatatouilleMixingRecipeGen extends MixingRecipeGen {
 
     RESIDUE_TO_PULP = create("residue_to_pulp", b -> b
             .require(CRItems.COMPOST_RESIDUE.get())
-            .require(CRItems.SALT.get())
+            .require(CRTags.SALTS)
             .require(Fluids.WATER, 250)
             .output(com.simibubi.create.AllItems.PULP.get())
             .requiresHeat(HeatCondition.HEATED)
@@ -87,7 +89,7 @@ public class RatatouilleMixingRecipeGen extends MixingRecipeGen {
 
     SALTY_DOUGH = create("salty_dough", b -> b
             .require(com.simibubi.create.AllItems.WHEAT_FLOUR.get())
-            .require(CRItems.SALT.get())
+            .require(CRTags.SALTS)
             .require(CRFluids.EGG_YOLK.get(), 100)
             .output(CRItems.SALTY_DOUGH.get())
     ),

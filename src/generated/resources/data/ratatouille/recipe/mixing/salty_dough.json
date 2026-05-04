@@ -5,7 +5,7 @@
       "item": "create:wheat_flour"
     },
     {
-      "item": "ratatouille:salt"
+      "tag": "c:salts"
     },
     {
       "type": "neoforge:single",

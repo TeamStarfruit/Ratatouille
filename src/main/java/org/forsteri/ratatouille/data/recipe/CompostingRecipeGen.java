@@ -12,6 +12,7 @@ import org.forsteri.ratatouille.content.compost_tower.CompostingRecipe;
 import org.forsteri.ratatouille.entry.CRFluids;
 import org.forsteri.ratatouille.entry.CRItems;
 import org.forsteri.ratatouille.entry.CRRecipeTypes;
+import org.forsteri.ratatouille.entry.CRTags;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -34,7 +35,7 @@ public class CompostingRecipeGen extends StandardProcessingRecipeGen<CompostingR
 
     LEATHER = this.create("leather", b -> b
             .require(Items.ROTTEN_FLESH)
-            .require(CRItems.SALT.get())
+            .require(CRTags.SALTS)
             .require(Fluids.WATER, 50)
             .duration(500)
             .output(Items.LEATHER)),
@@ -49,7 +50,7 @@ public class CompostingRecipeGen extends StandardProcessingRecipeGen<CompostingR
     SLIME_BALL = this.create("slime_ball", b -> b
             .require(Items.KELP)
             .require(Items.KELP)
-            .require(CRItems.SALT.get())
+            .require(CRTags.SALTS)
             .require(Fluids.WATER, 50)
             .duration(500)
             .output(Items.SLIME_BALL))

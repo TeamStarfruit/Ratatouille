@@ -16,6 +16,8 @@ public class CRTags {
     public static final TagKey<Item> COMPOSTABLE_ITEMS_2to1 = CRTags.modItemTag("compostable_items_2to1");
     public static final TagKey<Item> COMPOSTABLE_ITEMS_4to1 = CRTags.modItemTag("compostable_items_4to1");
 
+    public static final TagKey<Item> SALTS = commonItemTag("salts");
+
     public static void init() {
     }
 
@@ -26,4 +28,6 @@ public class CRTags {
     public static TagKey<Item> commonItemTag(String id) {
         return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", id));
     }
+
+
 }

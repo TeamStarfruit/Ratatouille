@@ -14,6 +14,7 @@ import org.forsteri.ratatouille.content.chef_hat.ChefHatWithGogglesItem;
 import org.forsteri.ratatouille.content.chef_hat.ChefHatWithGogglesModel;
 import org.forsteri.ratatouille.content.chocolate_mold_filled.ChocolateMoldFilledItem;
 import org.forsteri.ratatouille.content.compost_tea.CompostTeaBottleItem;
+import net.neoforged.neoforge.common.Tags;
 
 public class CRItems {
     public static final ItemEntry<Item> SAUSAGE_CASING = Ratatouille.REGISTRATE.item("sausage_casing", Item::new).register();

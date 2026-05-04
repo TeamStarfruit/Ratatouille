@@ -5,7 +5,7 @@
       "tag": "ratatouille:raw_meat"
     },
     {
-      "item": "ratatouille:salt"
+      "tag": "c:salts"
     }
   ],
   "results": [
