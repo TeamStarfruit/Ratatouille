@@ -1,15 +1,12 @@
 {
-  "type":"createaddition:liquid_burning",
-  "input": {
-    "fluid": "ratatouille:bio_gas",
-    "amount": 1000
-  },
-  "burnTime": 4000,
-  "superheated": false,
-  "conditions": [
+  "type": "createaddition:liquid_burning",
+  "burn_time": 4000,
+  "ingredients": [
     {
-      "type": "forge:mod_loaded",
-      "modid": "createaddition"
+      "type": "neoforge:tag",
+      "amount": 1000,
+      "tag": "c:bio_gas"
     }
-    ]
+  ],
+  "results": []
 }

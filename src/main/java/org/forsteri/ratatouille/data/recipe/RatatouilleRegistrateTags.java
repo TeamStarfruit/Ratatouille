@@ -13,6 +13,7 @@ import net.minecraft.world.level.material.Fluid;
 import net.neoforged.neoforge.common.Tags;
 import org.checkerframework.checker.units.qual.C;
 import org.forsteri.ratatouille.Ratatouille;
+import org.forsteri.ratatouille.entry.CRFluids;
 import org.forsteri.ratatouille.entry.CRItems;
 import org.forsteri.ratatouille.entry.CRTags;
 import vectorwing.farmersdelight.common.registry.ModItems;
@@ -119,7 +120,10 @@ public class RatatouilleRegistrateTags {
     }
 
     private static void genFluidTags(RegistrateTagsProvider<Fluid> provIn) {
+        TagGen.CreateTagsProvider<Fluid> prov = new TagGen.CreateTagsProvider<>(provIn, Fluid::builtInRegistryHolder);
 
+        prov.tag(CRTags.bio_gas)
+                .add(CRFluids.BIO_GAS.get());
     }
 
     private static void genEntityTags(RegistrateTagsProvider<EntityType<?>> provIn) {

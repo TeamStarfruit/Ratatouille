@@ -1,10 +1,13 @@
 package org.forsteri.ratatouille.entry;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.FluidTags;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.material.Fluid;
 import org.forsteri.ratatouille.Ratatouille;
+
 
 public class CRTags {
 
@@ -17,6 +20,7 @@ public class CRTags {
     public static final TagKey<Item> COMPOSTABLE_ITEMS_4to1 = CRTags.modItemTag("compostable_items_4to1");
 
     public static final TagKey<Item> SALTS = commonItemTag("salts");
+    public static final TagKey<Fluid> bio_gas = commonFluidTag("bio_gas");
 
     public static void init() {
     }
@@ -27,6 +31,9 @@ public class CRTags {
 
     public static TagKey<Item> commonItemTag(String id) {
         return ItemTags.create(ResourceLocation.fromNamespaceAndPath("c", id));
+    }
+    public static TagKey<Fluid> commonFluidTag(String id) {
+        return FluidTags.create(ResourceLocation.fromNamespaceAndPath("c", id));
     }
 
 
