@@ -211,9 +211,12 @@ public class SqueezeBasinBlockEntity extends SmartBlockEntity implements IHaveGo
     }
 
     private void process() {
+        if (level == null) return;
+
         if (this.lastRecipe == null || !this.lastRecipe.match(this, this.getBlockState().getValue(CASING))) {
             Optional<SqueezingRecipe> recipe = CRRecipeTypes.SQUEEZING.find(inputInventory, this.level);
             if (recipe.isEmpty()) {
+                lastRecipe = null;
                 return;
             }
 
@@ -226,14 +229,21 @@ public class SqueezeBasinBlockEntity extends SmartBlockEntity implements IHaveGo
             return;
 
         if (useCasing)
-            getLevel().setBlockAndUpdate(worldPosition, getBlockState().setValue(CASING, false));
+            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CASING, false));
         if (!this.lastRecipe.getFluidIngredients().isEmpty())
             this.fluidCapability.ifPresent(handler -> {
                 handler.drain(lastRecipe.getFluidIngredients().get(0).getRequiredAmount(), IFluidHandler.FluidAction.EXECUTE);
             });
-        ItemStack stackInSlot = this.inputInventory.getStackInSlot(0);
-        stackInSlot.shrink(1);
-        this.inputInventory.setStackInSlot(0, stackInSlot);
+
+        if (!lastRecipe.getIngredients().isEmpty()) {
+            ItemStack stack = inputInventory.getStackInSlot(0);
+
+            if (!stack.isEmpty()) {
+                stack.shrink(1);
+                inputInventory.setStackInSlot(0, stack);
+            }
+        }
+
         acceptOutputs(this.lastRecipe.rollResults(), false);
         notifyChangeOfContents();
         notifyUpdate();
