@@ -38,7 +38,7 @@ public class CRFluids {
                     .standardFluid("mince_meat")
                     .lang("Mince Meat")
                     .source(BaseFlowingFluid.Source::new).block().build()
-                    .bucket(NoPlaceBucketItem::new).build()
+                    .bucket().build()
                     .register();
 
     public static final FluidEntry<BaseFlowingFluid.Flowing> EGG_YOLK =
