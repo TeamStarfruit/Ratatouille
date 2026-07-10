@@ -77,32 +77,43 @@ public class MechanicalDemolderBlockEntity extends KineticBlockEntity implements
 
     @Override
     public boolean tryProcessOnBelt(TransportedItemStack input, List<ItemStack> outputList, boolean simulate) {
-        for (int i = 0; i < this.outputInv.getSlots(); i++)
-            if (this.outputInv.getStackInSlot(i).getCount() == this.outputInv.getSlotLimit(i))
-                return false;
 
-        Optional<RecipeHolder<DemoldingRecipe>> recipe = getRecipe(input.stack);
-        if (recipe.isEmpty())
+        Optional<RecipeHolder<DemoldingRecipe>> recipeHolder = getRecipe(input.stack);
+        if (recipeHolder.isEmpty())
             return false;
+
+        DemoldingRecipe recipe = recipeHolder.get().value();
+
+        List<ItemStack> outputs = RecipeApplier.applyRecipeOn(
+                level,
+                canProcessInBulk() ? input.stack : new ItemStack(input.stack.getItem(), 1),
+                recipe,
+                true
+        );
+
+        for (ItemStack stack : outputs) {
+            if (!stack.is(CRTags.MOLD))
+                continue;
+
+            if (!outputInv.insertItem(0, stack.copy(), true).isEmpty())
+                return false;
+        }
+
         if (simulate)
             return true;
+
         demoldingBehaviour.particleItems.add(input.stack);
-        List<ItemStack> outputs = RecipeApplier.applyRecipeOn(this.level,
-                canProcessInBulk() ? input.stack : new ItemStack(input.stack.getItem(), 1), recipe.get().value(), true);
 
-        for (ItemStack itemStack : outputs) {
-            if (!itemStack.is(CRTags.MOLD)) {
-                outputList.add(itemStack);
+        for (ItemStack stack : outputs) {
+
+            if (stack.is(CRTags.MOLD)) {
+                outputInv.insertItem(0, stack.copy(), false);
             } else {
-                if (outputInv.insertItem(0, itemStack.copy(), true).isEmpty()) {
-                    outputInv.insertItem(0, itemStack.copy(), false);
-                    return true;
-                } else {
-                    return false;
-                }
-
+                outputList.add(stack);
             }
+
         }
+
         return true;
     }
 

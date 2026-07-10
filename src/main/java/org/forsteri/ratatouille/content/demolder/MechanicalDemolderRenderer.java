@@ -41,6 +41,10 @@ public class MechanicalDemolderRenderer extends KineticBlockEntityRenderer<Mecha
                 .light(light)
                 .renderInto(ms, buffer.getBuffer(RenderType.solid()));
         ItemStack itemStack = be.outputInv.getStackInSlot(0);
+
+        if (itemStack.isEmpty())
+            return;
+
         ItemRenderer itemRenderer = Minecraft.getInstance().getItemRenderer();
         boolean renderUpright = BeltHelper.isItemUpright(itemStack);
         int count = (int) (Mth.log2((int) (itemStack.getCount()))) / 2;
