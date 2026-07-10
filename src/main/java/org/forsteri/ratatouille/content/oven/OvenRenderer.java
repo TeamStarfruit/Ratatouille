@@ -2,6 +2,7 @@ package org.forsteri.ratatouille.content.oven;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.simibubi.create.content.logistics.depot.DepotRenderer;
+import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringRenderer;
 import com.simibubi.create.foundation.blockEntity.renderer.SafeBlockEntityRenderer;
 import net.createmod.catnip.math.VecHelper;
 import net.minecraft.client.renderer.MultiBufferSource;
@@ -26,5 +27,9 @@ public class OvenRenderer extends SafeBlockEntityRenderer<OvenBlockEntity> {
 
         DepotRenderer.renderItem(be.getLevel(), ms, bufferSource, light, OverlayTexture.NO_OVERLAY, be.inventory.getStackInSlot(0), 0, (Random)null, Vec3.atCenterOf(be.getBlockPos()), true);
         ms.popPose();
+
+        if (be.isController()) {
+            FilteringRenderer.renderOnBlockEntity(be, partialTicks, ms, bufferSource, light, overlay);
+        }
     }
 }

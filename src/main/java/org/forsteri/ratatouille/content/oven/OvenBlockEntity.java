@@ -2,9 +2,13 @@ package org.forsteri.ratatouille.content.oven;
 
 import com.simibubi.create.api.connectivity.ConnectivityHandler;
 import com.simibubi.create.api.equipment.goggles.IHaveGoggleInformation;
+import com.simibubi.create.content.processing.basin.BasinBlockEntity;
 import com.simibubi.create.foundation.blockEntity.IMultiBlockEntityContainer;
 import com.simibubi.create.foundation.blockEntity.SmartBlockEntity;
 import com.simibubi.create.foundation.blockEntity.behaviour.BlockEntityBehaviour;
+import com.simibubi.create.foundation.blockEntity.behaviour.ValueBoxTransform;
+import com.simibubi.create.foundation.blockEntity.behaviour.filtering.FilteringBehaviour;
+import net.createmod.catnip.math.VecHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.nbt.CompoundTag;
@@ -14,10 +18,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Recipe;
 import net.minecraft.world.item.crafting.RecipeType;
 import net.minecraft.world.item.crafting.SmokingRecipe;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.util.LazyOptional;
 import net.minecraftforge.items.IItemHandlerModifiable;
@@ -43,6 +49,7 @@ public class OvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInfo
     protected int height = 1;
     protected int radius = 1;
     private boolean updateConnectivity = false;
+    private FilteringBehaviour filtering;
 
     public OvenBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState state) {
         super(type, pos, state);
@@ -51,7 +58,15 @@ public class OvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInfo
 
     @Override
     public void addBehaviours(List<BlockEntityBehaviour> behaviours) {
+        filtering = new FilteringBehaviour(this, new OvenValueBox()) {
+            @Override
+            public boolean isActive() {
+                return isController();
+            }
+        }.withCallback($ -> updateBakeData())
+                .forRecipes();
 
+        behaviours.add(filtering);
     }
 
     @Override
@@ -351,30 +366,52 @@ public class OvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInfo
 
         @Override
         public @NotNull ItemStack insertItem(int slot, @NotNull ItemStack stack, boolean simulate) {
-            assert level != null;
+            if (level == null) return stack;
 
+            var controller = OvenBlockEntity.this.getControllerBE();
+            FilteringBehaviour filter = controller == null ? null : controller.getFilter();
             ItemStack returnValue = super.insertItem(slot, stack, simulate);
 
             if (!simulate && returnValue.getCount() != stack.getCount()) {
                 RECIPE_WRAPPER.setItem(0, getStackInSlot(slot));
 
                 var bakingOpt = CRRecipeTypes.BAKING.find(RECIPE_WRAPPER, level);
-                if (bakingOpt.isPresent()) {
-                    BakingRecipe bakingRecipe = (BakingRecipe) bakingOpt.get();
-                    tickTillFinishCooking =
-                            bakingRecipe.getProcessingDuration() *
-                                    ((getStackInSlot(slot).getCount() - 1) / 16 + 1);
-                    lastRecipe = bakingRecipe;
-                    return returnValue;
+                var smokingOpt = level.getRecipeManager().getRecipeFor(RecipeType.SMOKING, RECIPE_WRAPPER, level);
+
+                Recipe<?> selectedRecipe = null;
+                int cookingTime = -1;
+
+                if (filter != null) {
+                    boolean bakingMatches = bakingOpt.isPresent() && filter.test(bakingOpt.get().getResultItem(level.registryAccess()));
+                    boolean smokingMatches = smokingOpt.isPresent() && filter.test(smokingOpt.get().getResultItem(level.registryAccess()));
+
+                    if (bakingMatches) {
+                        BakingRecipe bakingRecipe = (BakingRecipe) bakingOpt.get();
+                        selectedRecipe = bakingRecipe;
+                        cookingTime = bakingRecipe.getProcessingDuration();
+                    } else if (smokingMatches) {
+                        SmokingRecipe smokingRecipe = smokingOpt.get();
+                        selectedRecipe = smokingRecipe;
+                        cookingTime = smokingRecipe.getCookingTime();
+                    }
+                } else {
+                    if (bakingOpt.isPresent()) {
+                        BakingRecipe bakingRecipe = (BakingRecipe) bakingOpt.get();
+                        selectedRecipe = bakingRecipe;
+                        cookingTime = bakingRecipe.getProcessingDuration();
+                    } else if (smokingOpt.isPresent()) {
+                        SmokingRecipe smokingRecipe = smokingOpt.get();
+                        selectedRecipe = smokingRecipe;
+                        cookingTime = smokingRecipe.getCookingTime();
+                    }
                 }
 
-                var smokingOpt = level.getRecipeManager().getRecipeFor(RecipeType.SMOKING, RECIPE_WRAPPER, level);
-                if (smokingOpt.isPresent()) {
-                    SmokingRecipe smokingRecipe = smokingOpt.get();
-                    tickTillFinishCooking =
-                            smokingRecipe.getCookingTime() *
-                                    ((getStackInSlot(slot).getCount() - 1) / 16 + 1);
-                    lastRecipe = smokingRecipe;
+                if (selectedRecipe != null) {
+                    this.tickTillFinishCooking = cookingTime * ((getStackInSlot(slot).getCount() - 1) / 16 + 1);
+                    this.lastRecipe = selectedRecipe;
+                } else {
+                    this.tickTillFinishCooking = -1;
+                    this.lastRecipe = null;
                 }
             }
 
@@ -397,9 +434,28 @@ public class OvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInfo
         @Override
         public boolean isItemValid(int slot, @NotNull ItemStack stack) {
             assert level != null;
+
             RECIPE_WRAPPER.setItem(0, stack);
-            return CRRecipeTypes.BAKING.find(RECIPE_WRAPPER, level).isPresent()
-                    || level.getRecipeManager().getRecipeFor(RecipeType.SMOKING, RECIPE_WRAPPER, level).isPresent();
+            var bakingOpt = CRRecipeTypes.BAKING.find(RECIPE_WRAPPER, level);
+            var smokingOpt = level.getRecipeManager().getRecipeFor(RecipeType.SMOKING, RECIPE_WRAPPER, level);
+            if (bakingOpt.isEmpty() && smokingOpt.isEmpty()) {
+                return false;
+            }
+
+            var controller = OvenBlockEntity.this.getControllerBE();
+            FilteringBehaviour filter = controller == null ? null : controller.getFilter();
+
+            if (filter != null) {
+                boolean bakingOutputMatches = bakingOpt.isPresent()
+                        && filter.test(bakingOpt.get().getResultItem(level.registryAccess()));
+
+                boolean smokingOutputMatches = smokingOpt.isPresent()
+                        && filter.test(smokingOpt.get().getResultItem(level.registryAccess()));
+
+                return bakingOutputMatches || smokingOutputMatches;
+            }
+
+            return true;
         }
 
         @Override
@@ -431,6 +487,22 @@ public class OvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInfo
                 sendData();
                 notifyUpdate();
             }
+        }
+    }
+
+    public FilteringBehaviour getFilter() {
+        return filtering;
+    }
+
+    public static class OvenValueBox extends ValueBoxTransform.Sided {
+        @Override
+        protected Vec3 getSouthLocation() {
+            return VecHelper.voxelSpace(8, 12, 16.05);
+        }
+
+        @Override
+        protected boolean isSideActive(BlockState state, Direction direction) {
+            return direction.getAxis().isHorizontal();
         }
     }
 }
