@@ -5,15 +5,23 @@ import com.simibubi.create.content.kinetics.base.HorizontalKineticBlock;
 import com.simibubi.create.foundation.block.IBE;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.InteractionResult;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.LevelReader;
+import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.pathfinder.PathComputationType;
+import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.forsteri.ratatouille.entry.CRBlockEntityTypes;
+import org.jetbrains.annotations.NotNull;
 
 public class MechanicalDemolderBlock extends HorizontalKineticBlock implements IBE<MechanicalDemolderBlockEntity> {
 
@@ -65,5 +73,27 @@ public class MechanicalDemolderBlock extends HorizontalKineticBlock implements I
     @Override
     public boolean isPathfindable(BlockState state, BlockGetter reader, BlockPos pos, PathComputationType type) {
         return false;
+    }
+
+    @Override
+    public @NotNull InteractionResult use(BlockState pState, Level pLevel, BlockPos pPos, Player pPlayer, InteractionHand pHand, BlockHitResult pHit) {
+        if (pLevel.isClientSide)
+            return InteractionResult.SUCCESS;
+
+        BlockEntity blockEntity = pLevel.getBlockEntity(pPos);
+
+        if (!(blockEntity instanceof MechanicalDemolderBlockEntity be))
+            return InteractionResult.PASS;
+
+        ItemStack mold = be.outputInv.extractItem(0, 64, false);
+
+        if (mold.isEmpty())
+            return InteractionResult.PASS;
+
+        pPlayer.getInventory().placeItemBackInInventory(mold);
+
+        be.notifyUpdate();
+
+        return InteractionResult.SUCCESS;
     }
 }
