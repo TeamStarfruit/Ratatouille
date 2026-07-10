@@ -5,6 +5,8 @@ import com.simibubi.create.foundation.recipe.IRecipeTypeInfo;
 import net.minecraft.core.HolderLookup;
 import net.minecraft.data.PackOutput;
 import net.minecraft.world.item.Items;
+import net.minecraft.world.level.material.Fluid;
+import net.neoforged.neoforge.common.Tags;
 import org.forsteri.ratatouille.Ratatouille;
 import org.forsteri.ratatouille.content.squeeze_basin.SqueezingRecipe;
 import org.forsteri.ratatouille.entry.CRFluids;

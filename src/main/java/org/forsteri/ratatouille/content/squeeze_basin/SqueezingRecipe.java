@@ -27,8 +27,7 @@ public class SqueezingRecipe extends StandardProcessingRecipe<SqueezeBasinInvent
         if (useCasing() != be.hasCasing())
             return false;
 
-        // 检查物品
-        if (!useCasing() || ingredients.size() > 1) {
+        if (!ingredients.isEmpty() && (!useCasing() || ingredients.size() > 1)) {
             boolean matched = false;
 
             for (Ingredient ingredient : ingredients) {
@@ -42,7 +41,6 @@ public class SqueezingRecipe extends StandardProcessingRecipe<SqueezeBasinInvent
                 return false;
         }
 
-        // 检查流体
         if (!fluidIngredients.isEmpty()) {
 
             FluidStack tankFluid = be.fluidCapability.getFluidInTank(0);
@@ -102,6 +100,11 @@ public class SqueezingRecipe extends StandardProcessingRecipe<SqueezeBasinInvent
         }
 
         boolean useCasing = useCasing();
+
+        if (ingredients.isEmpty()) {
+            return true;
+        }
+
         for (Ingredient ingredient : ingredients) {
             if (ingredient.test(CRItems.SAUSAGE_CASING.asStack())) {
                 if (smartInventory.blockEntity == null) return false;

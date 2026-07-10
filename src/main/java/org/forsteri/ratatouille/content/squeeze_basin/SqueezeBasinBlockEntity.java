@@ -226,29 +226,50 @@ public class SqueezeBasinBlockEntity extends SmartBlockEntity implements IHaveGo
     }
 
     private void process() {
-        if (level == null) return;
-        if (this.lastRecipe == null || !lastRecipe.match(this)) {
-            Optional<RecipeHolder<SqueezingRecipe>> recipe = CRRecipeTypes.SQUEEZING.find(inputInventory, this.level);
-            if (recipe.isEmpty()) {
-                return;
-            }
-            this.lastRecipe = recipe.get().value();
-        }
-
-
-        boolean useCasing = this.lastRecipe.useCasing();
-        if (useCasing != getBlockState().getValue(CASING))
+        if (level == null)
             return;
 
-        if (useCasing)
-            level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CASING, false));
-        if (!this.lastRecipe.getFluidIngredients().isEmpty())
-            this.fluidCapability.drain(lastRecipe.getFluidIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
+        if (lastRecipe == null || !lastRecipe.match(this)) {
+            Optional<RecipeHolder<SqueezingRecipe>> recipe =
+                    CRRecipeTypes.SQUEEZING.find(inputInventory, level);
 
-        ItemStack stackInSlot = this.inputInventory.getStackInSlot(0);
-        stackInSlot.shrink(1);
-        this.inputInventory.setStackInSlot(0, stackInSlot);
-        acceptOutputs(this.lastRecipe.rollResults(level.random), false);
+            if (recipe.isEmpty()) {
+                lastRecipe = null;
+                return;
+            }
+
+            lastRecipe = recipe.get().value();
+        }
+
+        if (lastRecipe.useCasing() != getBlockState().getValue(CASING))
+            return;
+
+        if (lastRecipe.useCasing()) {
+            level.setBlockAndUpdate(
+                    worldPosition,
+                    getBlockState().setValue(CASING, false)
+            );
+        }
+
+        if (!lastRecipe.getFluidIngredients().isEmpty()) {
+            int amount = lastRecipe.getFluidIngredients()
+                    .getFirst()
+                    .amount();
+
+            fluidCapability.drain(amount, IFluidHandler.FluidAction.EXECUTE);
+        }
+
+        if (!lastRecipe.getIngredients().isEmpty()) {
+            ItemStack stack = inputInventory.getStackInSlot(0);
+
+            if (!stack.isEmpty()) {
+                stack.shrink(1);
+                inputInventory.setStackInSlot(0, stack);
+            }
+        }
+
+        acceptOutputs(lastRecipe.rollResults(level.random), false);
+
         notifyChangeOfContents();
         notifyUpdate();
     }
