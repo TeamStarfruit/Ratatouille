@@ -4,6 +4,7 @@ import com.simibubi.create.content.processing.recipe.ProcessingRecipeParams;
 import com.simibubi.create.content.processing.recipe.StandardProcessingRecipe;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.Level;
+import net.neoforged.neoforge.fluids.FluidStack;
 import net.neoforged.neoforge.fluids.capability.IFluidHandler;
 import net.neoforged.neoforge.fluids.crafting.SizedFluidIngredient;
 import org.forsteri.ratatouille.entry.CRItems;
@@ -16,31 +17,42 @@ public class SqueezingRecipe extends StandardProcessingRecipe<SqueezeBasinInvent
     }
 
     public boolean match(@NotNull SqueezeBasinBlockEntity be) {
+
         if (be.getOperator().isEmpty())
             return false;
 
-        IFluidHandler inputTank = be.fluidCapability;
-
-        if (be.inputInventory == null || inputTank == null)
+        if (be.inputInventory == null || be.fluidCapability == null)
             return false;
 
-        boolean useCasing = useCasing();
-        if (useCasing != be.hasCasing())
+        if (useCasing() != be.hasCasing())
             return false;
-        if (useCasing && ingredients.size() == 1) {
-            if (fluidIngredients.isEmpty())
-                return true;
-            return fluidIngredients.getFirst().test(inputTank.getFluidInTank(0));
-        } else {
+
+        // 检查物品
+        if (!useCasing() || ingredients.size() > 1) {
+            boolean matched = false;
+
             for (Ingredient ingredient : ingredients) {
                 if (ingredient.test(be.inputInventory.getItem(0))) {
-                    if (fluidIngredients.isEmpty())
-                        return true;
-                    return fluidIngredients.getFirst().test(inputTank.getFluidInTank(0));
+                    matched = true;
+                    break;
                 }
             }
+
+            if (!matched)
+                return false;
         }
-        return false;
+
+        // 检查流体
+        if (!fluidIngredients.isEmpty()) {
+
+            FluidStack tankFluid = be.fluidCapability.getFluidInTank(0);
+            SizedFluidIngredient ingredient = fluidIngredients.getFirst();
+
+            if (!ingredient.test(tankFluid))
+                return false;
+        }
+
+        return true;
     }
 
     public boolean useCasing() {

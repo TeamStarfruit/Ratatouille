@@ -243,7 +243,7 @@ public class SqueezeBasinBlockEntity extends SmartBlockEntity implements IHaveGo
         if (useCasing)
             level.setBlockAndUpdate(worldPosition, getBlockState().setValue(CASING, false));
         if (!this.lastRecipe.getFluidIngredients().isEmpty())
-            this.fluidCapability.drain(this.fluidCapability.getFluidInTank(0), IFluidHandler.FluidAction.EXECUTE);
+            this.fluidCapability.drain(lastRecipe.getFluidIngredients().getFirst().amount(), IFluidHandler.FluidAction.EXECUTE);
 
         ItemStack stackInSlot = this.inputInventory.getStackInSlot(0);
         stackInSlot.shrink(1);
