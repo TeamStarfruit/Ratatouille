@@ -18,6 +18,7 @@ import net.minecraft.nbt.NbtUtils;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.*;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -502,6 +503,28 @@ public class OvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInfo
         protected Vec3 getSouthLocation() {
             return VecHelper.voxelSpace(8, 12, 16.05);
         }
+
+        @Override
+        public boolean shouldRender(LevelAccessor level, BlockPos pos, BlockState state) {
+
+            if (!super.shouldRender(level, pos, state))
+                return false;
+
+            BlockPos neighbourPos = pos.relative(getSide());
+
+            BlockEntity be = level.getBlockEntity(neighbourPos);
+
+            if (!(be instanceof OvenBlockEntity other))
+                return true;
+
+            BlockEntity current = level.getBlockEntity(pos);
+
+            if (!(current instanceof OvenBlockEntity self))
+                return true;
+
+            return !self.getController().equals(other.getController());
+        }
+
 
         @Override
         protected boolean isSideActive(BlockState state, Direction direction) {
