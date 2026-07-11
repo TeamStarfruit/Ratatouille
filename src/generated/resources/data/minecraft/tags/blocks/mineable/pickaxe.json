@@ -12,7 +12,6 @@
     "ratatouille:aerator",
     "ratatouille:fishpond_wall",
     "ratatouille:fishpond_fluid_interface",
-    "ratatouille:sludge",
     "ratatouille:fishing_net"
   ]
 }

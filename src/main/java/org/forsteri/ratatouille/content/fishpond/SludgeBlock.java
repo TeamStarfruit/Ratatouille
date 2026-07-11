@@ -1,19 +1,21 @@
 package org.forsteri.ratatouille.content.fishpond;
 
-import com.simibubi.create.foundation.block.WrenchableDirectionalBlock;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.LevelAccessor;
 import net.minecraft.world.level.LevelReader;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.IntegerProperty;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.forsteri.ratatouille.entry.CRShapes;
+import org.jetbrains.annotations.NotNull;
 
 import javax.annotation.Nullable;
 
@@ -55,7 +57,33 @@ public class SludgeBlock extends Block {
         } else if (blockstate.is(BlockTags.SNOW_LAYER_CAN_SURVIVE_ON)) {
             return true;
         } else {
-            return blockstate.isFaceSturdy(pLevel, pPos.below(), Direction.UP);
+            return Block.isFaceFull(blockstate.getCollisionShape(pLevel, pPos.below()), Direction.UP);
         }
     }
+
+    @Override
+    public boolean canBeReplaced(BlockState pState, BlockPlaceContext pUseContext) {
+        int i = pState.getValue(THICKNESS);
+        if (pUseContext.getItemInHand().is(this.asItem()) && i < 4) {
+            if (pUseContext.replacingClickedOnBlock()) {
+                return pUseContext.getClickedFace() == Direction.UP;
+            } else {
+                return true;
+            }
+        } else {
+            return i == 1;
+        }
+    }
+
+    @Override
+    public boolean useShapeForLightOcclusion(@NotNull BlockState pState) {
+        return true;
+    }
+
+
+    @Override
+    public BlockState updateShape(BlockState pState, Direction pFacing, BlockState pFacingState, LevelAccessor pLevel, BlockPos pCurrentPos, BlockPos pFacingPos) {
+        return !pState.canSurvive(pLevel, pCurrentPos) ? Blocks.AIR.defaultBlockState() : super.updateShape(pState, pFacing, pFacingState, pLevel, pCurrentPos, pFacingPos);
+    }
+
 }

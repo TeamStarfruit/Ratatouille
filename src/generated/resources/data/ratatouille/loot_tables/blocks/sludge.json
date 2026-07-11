@@ -3,17 +3,89 @@
   "pools": [
     {
       "bonus_rolls": 0.0,
-      "conditions": [
-        {
-          "condition": "minecraft:survives_explosion"
-        }
-      ],
       "entries": [
         {
           "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "ratatouille:sludge",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "thickness": "1"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 1.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "ratatouille:sludge"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "ratatouille:sludge",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "thickness": "2"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 2.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "ratatouille:sludge"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "ratatouille:sludge",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "thickness": "3"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 3.0,
+              "function": "minecraft:set_count"
+            }
+          ],
+          "name": "ratatouille:sludge"
+        },
+        {
+          "type": "minecraft:item",
+          "conditions": [
+            {
+              "block": "ratatouille:sludge",
+              "condition": "minecraft:block_state_property",
+              "properties": {
+                "thickness": "4"
+              }
+            }
+          ],
+          "functions": [
+            {
+              "add": false,
+              "count": 4.0,
+              "function": "minecraft:set_count"
+            }
+          ],
           "name": "ratatouille:sludge"
         }
       ],
+      "name": "sludge_drops",
       "rolls": 1.0
     }
   ],

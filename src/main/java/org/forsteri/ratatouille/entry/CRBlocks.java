@@ -1,18 +1,27 @@
 package org.forsteri.ratatouille.entry;
 
-import com.simibubi.create.AllSpriteShifts;
-import com.simibubi.create.content.decoration.encasing.CasingBlock;
 import com.simibubi.create.content.processing.AssemblyOperatorBlockItem;
 import com.simibubi.create.foundation.block.connected.SimpleCTBehaviour;
 import com.simibubi.create.foundation.data.*;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import com.tterrag.registrate.util.nullness.NonNullFunction;
+import net.minecraft.advancements.critereon.MinMaxBounds;
+import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.tags.BlockTags;
+import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraft.world.level.material.MapColor;
+import net.minecraft.world.level.storage.loot.LootPool;
+import net.minecraft.world.level.storage.loot.LootTable;
+import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
+import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
+import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
+import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import org.forsteri.ratatouille.Ratatouille;
 import org.forsteri.ratatouille.content.aerator.AeratorBlock;
@@ -36,6 +45,7 @@ import org.forsteri.ratatouille.content.thresher.ThresherBlock;
 import static com.simibubi.create.foundation.data.BlockStateGen.simpleCubeAll;
 import static com.simibubi.create.foundation.data.ModelGen.customItemModel;
 import static com.simibubi.create.foundation.data.TagGen.pickaxeOnly;
+import static net.minecraft.world.level.storage.loot.entries.LootItem.lootTableItem;
 
 public class CRBlocks {
 
@@ -204,8 +214,8 @@ public class CRBlocks {
     public static final BlockEntry<SludgeBlock> SLUDGE = Ratatouille.REGISTRATE
             .block("sludge", SludgeBlock::new)
             .initialProperties(SharedProperties::softMetal)
-            .properties(p -> p.mapColor(MapColor.DIRT).noOcclusion().strength(0.5F).sound(SoundType.MUD))
-            .transform(pickaxeOnly())
+            .properties(p -> p.mapColor(MapColor.DIRT).noOcclusion().strength(0.5F).sound(SoundType.MUD).noCollission())
+            .transform(shovelOnly())
             .blockstate((ctx, prov) -> {
                 prov.getVariantBuilder(ctx.getEntry()).forAllStates(state -> {
                     int thickness = state.getValue(SludgeBlock.THICKNESS);
@@ -214,8 +224,24 @@ public class CRBlocks {
                             .build();
                 });
             })
+            .loot((provider, block) -> {
+                LootPool.Builder pool = LootPool.lootPool()
+                        .name("sludge_drops");
+                for (int t = 1; t <= 4; t++) {
+                    pool.add(lootTableItem(block)
+                            .when(LootItemBlockStatePropertyCondition.hasBlockStateProperties(block)
+                                    .setProperties(StatePropertiesPredicate.Builder.properties()
+                                            .hasProperty(SludgeBlock.THICKNESS, t)))
+                            .apply(net.minecraft.world.level.storage.loot.functions.SetItemCountFunction
+                                    .setCount(ConstantValue.exactly(t)))
+                    );
+                }
+
+                provider.add(block, LootTable.lootTable().withPool(pool));
+            })
             .item()
-            .model((c, p) -> p.withExistingParent(c.getName(), Ratatouille.asResource("block/sludge/item")))
+            .model((ctx, prov) -> prov.withExistingParent(ctx.getName(), "item/generated")
+                    .texture("layer0", prov.modLoc("item/" + ctx.getName())))
             .build()
             .register();
 
@@ -236,6 +262,9 @@ public class CRBlocks {
             .register();
 
 
+    public static <T extends Block, P> NonNullFunction<BlockBuilder<T, P>, BlockBuilder<T, P>> shovelOnly() {
+        return b -> b.tag(BlockTags.MINEABLE_WITH_SHOVEL);
+    }
 
     public static void register() {}
 }
