@@ -27,8 +27,7 @@ public class AeratorRenderer extends KineticBlockEntityRenderer<AeratorBlockEnti
                               int light, int overlay) {
         if (VisualizationManager.supportsVisualization(be.getLevel())) return;
 
-        Direction direction = be.getBlockState()
-                .getValue(HORIZONTAL_FACING);
+        Direction direction = Direction.UP;
         VertexConsumer vb = buffer.getBuffer(RenderType.cutoutMipped());
         LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().relative(direction.getOpposite()));
         int lightBehind = LevelRenderer.getLightColor(be.getLevel(), be.getBlockPos().relative(direction.getOpposite()));

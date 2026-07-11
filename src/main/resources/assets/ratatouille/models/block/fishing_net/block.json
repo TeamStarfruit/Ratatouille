@@ -1,5 +1,6 @@
 {
 	"format_version": "1.21.11",
+	"render_type": "minecraft:cutout",
 	"credit": "Made with Blockbench",
 	"textures": {
 		"0": "ratatouille:block/fishing_net/frame",

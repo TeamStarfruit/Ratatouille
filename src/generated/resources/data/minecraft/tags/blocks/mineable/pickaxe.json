@@ -10,6 +10,9 @@
     "ratatouille:frozen_block",
     "ratatouille:compost_tower",
     "ratatouille:aerator",
-    "ratatouille:fishpond_block"
+    "ratatouille:fishpond_wall",
+    "ratatouille:fishpond_fluid_interface",
+    "ratatouille:sludge",
+    "ratatouille:fishing_net"
   ]
 }

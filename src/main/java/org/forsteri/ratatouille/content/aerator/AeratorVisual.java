@@ -1,5 +1,6 @@
 package org.forsteri.ratatouille.content.aerator;
 
+import com.simibubi.create.AllPartialModels;
 import com.simibubi.create.content.kinetics.base.KineticBlockEntityVisual;
 import com.simibubi.create.content.kinetics.base.RotatingInstance;
 import com.simibubi.create.foundation.render.AllInstanceTypes;
@@ -16,17 +17,27 @@ import org.jetbrains.annotations.Nullable;
 import java.util.function.Consumer;
 
 public class AeratorVisual extends KineticBlockEntityVisual<AeratorBlockEntity> {
+    protected final RotatingInstance cogWheel;
     protected final RotatingInstance fan;
     final Direction direction;
-
+    private final Direction opposite;
     public AeratorVisual(VisualizationContext context, AeratorBlockEntity blockEntity, float partialTick) {
         super(context, blockEntity, partialTick);
+        this.cogWheel = (RotatingInstance)instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(AllPartialModels.SHAFTLESS_COGWHEEL))
+                .createInstance();
         this.fan = (RotatingInstance)instancerProvider().instancer(AllInstanceTypes.ROTATING, Models.partial(CRPartialModels.AERATOR_BLADE))
                 .createInstance();
-        this.direction = (Direction)this.blockState.getValue(BlockStateProperties.HORIZONTAL_FACING);
+
+        this.direction = Direction.UP;
+        this.opposite = this.direction.getOpposite();
+
+        this.cogWheel.setup(blockEntity)
+                .setPosition(getVisualPosition())
+                .rotateToFace(opposite)
+                .setChanged();;
         this.fan.setup(blockEntity, this.getFanSpeed())
                 .setPosition(getVisualPosition())
-                .rotateToFace(Direction.DOWN, direction)
+                .rotateToFace(Direction.DOWN, opposite)
                 .setChanged();
     }
 
@@ -45,17 +56,31 @@ public class AeratorVisual extends KineticBlockEntityVisual<AeratorBlockEntity> 
 
     @Override
     public void updateLight(float partialTick) {
+        BlockPos behind = pos.relative(opposite);
+        relight(behind, cogWheel);
+
         BlockPos inFront = pos.relative(direction);
         relight(inFront, fan);
     }
 
     @Override
     public void collectCrumblingInstances(Consumer<@Nullable Instance> consumer) {
+        consumer.accept(cogWheel);
         consumer.accept(fan);
     }
 
     @Override
+    public void update(float pt) {
+        cogWheel.setup(blockEntity)
+                .setChanged();
+        fan.setup(blockEntity, getFanSpeed())
+                .setChanged();
+    }
+
+    @Override
     protected void _delete() {
+        cogWheel.delete();
         fan.delete();
     }
+
 }

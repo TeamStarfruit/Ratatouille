@@ -14,6 +14,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.EntityCollisionContext;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.forsteri.ratatouille.entry.CRBlockEntityTypes;
+import org.forsteri.ratatouille.entry.CRShapes;
 
 public class AeratorBlock extends KineticBlock implements IBE<AeratorBlockEntity>, ICogWheel {
     public AeratorBlock(Properties properties) {
@@ -27,7 +28,7 @@ public class AeratorBlock extends KineticBlock implements IBE<AeratorBlockEntity
 
     @Override
     public VoxelShape getShape(BlockState state, BlockGetter worldIn, BlockPos pos, CollisionContext context) {
-        return AllShapes.CASING_12PX.get(Direction.UP);
+        return CRShapes.AERATOR.get(Direction.UP);
     }
 
 

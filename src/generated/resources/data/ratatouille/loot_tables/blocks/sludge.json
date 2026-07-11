@@ -11,11 +11,11 @@
       "entries": [
         {
           "type": "minecraft:item",
-          "name": "ratatouille:fishpond_block"
+          "name": "ratatouille:sludge"
         }
       ],
       "rolls": 1.0
     }
   ],
-  "random_sequence": "ratatouille:blocks/fishpond_block"
+  "random_sequence": "ratatouille:blocks/sludge"
 }

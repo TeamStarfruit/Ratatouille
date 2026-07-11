@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "thickness=1": {
+      "model": "ratatouille:block/sludge/sludge_1"
+    },
+    "thickness=2": {
+      "model": "ratatouille:block/sludge/sludge_2"
+    },
+    "thickness=3": {
+      "model": "ratatouille:block/sludge/sludge_3"
+    },
+    "thickness=4": {
+      "model": "ratatouille:block/sludge/sludge_4"
+    }
+  }
+}

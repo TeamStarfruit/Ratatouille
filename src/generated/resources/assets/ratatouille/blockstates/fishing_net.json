@@ -1,0 +1,30 @@
+{
+  "variants": {
+    "facing=down": {
+      "model": "ratatouille:block/fishing_net/block",
+      "x": 180
+    },
+    "facing=east": {
+      "model": "ratatouille:block/fishing_net/block",
+      "x": 90,
+      "y": 90
+    },
+    "facing=north": {
+      "model": "ratatouille:block/fishing_net/block",
+      "x": 90
+    },
+    "facing=south": {
+      "model": "ratatouille:block/fishing_net/block",
+      "x": 90,
+      "y": 180
+    },
+    "facing=up": {
+      "model": "ratatouille:block/fishing_net/block"
+    },
+    "facing=west": {
+      "model": "ratatouille:block/fishing_net/block",
+      "x": 90,
+      "y": 270
+    }
+  }
+}

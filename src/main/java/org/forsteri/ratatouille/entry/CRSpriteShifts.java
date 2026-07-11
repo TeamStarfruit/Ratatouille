@@ -21,7 +21,7 @@ public class CRSpriteShifts {
             COMPOST_TOWER_BOTTOM = getCT("compost_tower/compost_tower_bottom"),
             COMPOST_TOWER_BOTTOM_INNER = getCT("compost_tower/compost_tower_bottom_inner"),
             COMPOST_TOWER_SHIFT_2x2 = getCT("compost_tower/compost_tower", "compost_tower/compost_tower_2x2"),
-            FISHPOND_BLOCK = omni("fishpond_block");
+            FISHPOND_WALL = omni("fishpond_wall/fishpond_wall");
 
     private static CTSpriteShiftEntry getCT(String blockTextureName, String connectedTextureName) {
         return CTSpriteShifter.getCT(AllCTTypes.RECTANGLE, new ResourceLocation(Ratatouille.MOD_ID, "block/" + blockTextureName),
