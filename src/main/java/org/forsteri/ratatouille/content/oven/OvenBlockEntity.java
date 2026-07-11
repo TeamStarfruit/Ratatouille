@@ -501,6 +501,27 @@ public class OvenBlockEntity extends SmartBlockEntity implements IHaveGoggleInfo
         }
 
         @Override
+        public boolean shouldRender(LevelAccessor level, BlockPos pos, BlockState state) {
+
+            if (!super.shouldRender(level, pos, state))
+                return false;
+
+            BlockPos neighbourPos = pos.relative(getSide());
+
+            BlockEntity be = level.getBlockEntity(neighbourPos);
+
+            if (!(be instanceof OvenBlockEntity other))
+                return true;
+
+            BlockEntity current = level.getBlockEntity(pos);
+
+            if (!(current instanceof OvenBlockEntity self))
+                return true;
+
+            return !self.getController().equals(other.getController());
+        }
+
+        @Override
         protected boolean isSideActive(BlockState state, Direction direction) {
             return direction.getAxis().isHorizontal();
         }
