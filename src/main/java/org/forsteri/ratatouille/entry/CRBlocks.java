@@ -6,12 +6,10 @@ import com.simibubi.create.foundation.data.*;
 import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullFunction;
-import net.minecraft.advancements.critereon.MinMaxBounds;
 import net.minecraft.advancements.critereon.StatePropertiesPredicate;
 import net.minecraft.client.renderer.RenderType;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
-import net.minecraft.util.valueproviders.ConstantInt;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.SoundType;
 import net.minecraft.world.level.block.state.BlockBehaviour;
@@ -19,9 +17,7 @@ import net.minecraft.world.level.material.MapColor;
 import net.minecraft.world.level.storage.loot.LootPool;
 import net.minecraft.world.level.storage.loot.LootTable;
 import net.minecraft.world.level.storage.loot.predicates.LootItemBlockStatePropertyCondition;
-import net.minecraft.world.level.storage.loot.predicates.LootItemCondition;
 import net.minecraft.world.level.storage.loot.providers.number.ConstantValue;
-import net.minecraft.world.level.storage.loot.providers.number.NumberProvider;
 import net.minecraftforge.client.model.generators.ConfiguredModel;
 import org.forsteri.ratatouille.Ratatouille;
 import org.forsteri.ratatouille.content.aerator.AeratorBlock;
@@ -30,8 +26,7 @@ import org.forsteri.ratatouille.content.compost_tower.CompostTowerModel;
 import org.forsteri.ratatouille.content.compost_tower.CompostTowerBlockItem;
 import org.forsteri.ratatouille.content.demolder.MechanicalDemolderBlock;
 import org.forsteri.ratatouille.content.fishpond.FishingNetBlock;
-import org.forsteri.ratatouille.content.fishpond.FishpondFluidInterfaceBlock;
-import org.forsteri.ratatouille.content.fishpond.FishpondWallBlock;
+import org.forsteri.ratatouille.content.fishpond.FishpondBlock;
 import org.forsteri.ratatouille.content.fishpond.SludgeBlock;
 import org.forsteri.ratatouille.content.frozen_block.FrozenBlock;
 import org.forsteri.ratatouille.content.irrigation_tower.IrrigationTowerBlock;
@@ -188,24 +183,13 @@ public class CRBlocks {
             .register();
 
     @SuppressWarnings("removal")
-    public static final BlockEntry<FishpondWallBlock> FISHPOND_WALL = Ratatouille.REGISTRATE
-            .block("fishpond_wall", FishpondWallBlock::new)
+    public static final BlockEntry<FishpondBlock> FISHPOND_WALL = Ratatouille.REGISTRATE
+            .block("fishpond_wall", FishpondBlock::new)
             .initialProperties(SharedProperties::stone)
             .properties(p -> p.mapColor(MapColor.PODZOL))
             .transform(pickaxeOnly())
             .blockstate(simpleCubeAll("fishpond_wall/fishpond_wall"))
             .onRegister(CreateRegistrate.connectedTextures(() -> new SimpleCTBehaviour(CRSpriteShifts.FISHPOND_WALL)))
-            .item()
-            .build()
-            .register();
-
-    @SuppressWarnings("removal")
-    public static final BlockEntry<FishpondFluidInterfaceBlock> FISHPOND_FLUID_INTERFACE = Ratatouille.REGISTRATE
-            .block("fishpond_fluid_interface", FishpondFluidInterfaceBlock::new)
-            .initialProperties(SharedProperties::stone)
-            .properties(p -> p.mapColor(MapColor.PODZOL).noOcclusion())
-            .transform(pickaxeOnly())
-            .blockstate(simpleCubeAll("fishpond_fluid_interface"))
             .item()
             .build()
             .register();

@@ -6,7 +6,6 @@ import org.forsteri.ratatouille.content.aerator.AeratorBlockEntity;
 import org.forsteri.ratatouille.content.aerator.AeratorRenderer;
 import org.forsteri.ratatouille.content.aerator.AeratorVisual;
 import org.forsteri.ratatouille.content.compost_tower.CompostTowerBlockEntity;
-import org.forsteri.ratatouille.content.fishpond.FishpondFluidInterfaceBlockEntity;
 import org.forsteri.ratatouille.content.demolder.DemolderVisual;
 import org.forsteri.ratatouille.content.demolder.MechanicalDemolderBlockEntity;
 import org.forsteri.ratatouille.content.demolder.MechanicalDemolderRenderer;
@@ -27,6 +26,7 @@ import org.forsteri.ratatouille.content.squeeze_basin.SqueezeBasinRenderer;
 import org.forsteri.ratatouille.content.thresher.ThresherBlockEntity;
 import org.forsteri.ratatouille.content.thresher.ThresherVisual;
 import org.forsteri.ratatouille.content.thresher.ThresherRenderer;
+import org.forsteri.ratatouille.content.fishpond.FishpondBlockEntity;
 import org.forsteri.ratatouille.content.compost_tower.CompostTowerRenderer;
 
 public class CRBlockEntityTypes {
@@ -94,9 +94,9 @@ public class CRBlockEntityTypes {
             .renderer(() -> AeratorRenderer::new)
             .register();
 
-    public static final BlockEntityEntry<FishpondFluidInterfaceBlockEntity> FISHPOND_FLUID_INTERFACE_ENTITY = Ratatouille.REGISTRATE
-            .blockEntity("fishpond_fluid_interface", FishpondFluidInterfaceBlockEntity::new)
-            .validBlock(CRBlocks.FISHPOND_FLUID_INTERFACE)
+    public static final BlockEntityEntry<FishpondBlockEntity> FISHPOND_WALL_ENTITY = Ratatouille.REGISTRATE
+            .blockEntity("fishpond_wall", FishpondBlockEntity::new)
+            .validBlock(CRBlocks.FISHPOND_WALL)
             .register();
 
     public static void register() {}
