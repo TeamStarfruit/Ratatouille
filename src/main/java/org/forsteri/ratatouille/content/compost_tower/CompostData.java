@@ -77,7 +77,7 @@ public class CompostData {
 
         if (controller.getLevel() == null) return;
 
-        ItemStackHandler inputInventory = controller.inputInventory;
+        ItemStackHandler outputInventory = controller.outputInventory;
         IFluidHandler fluidHandler = controller.tankInventory;
 
         if (timer > 0) {
@@ -86,7 +86,7 @@ public class CompostData {
 
             if (timer <= 0) {
                 if (!CompostingRecipe.match(controller, lastRecipe)
-                        || !canOutput(inputInventory, fluidHandler, controller.getLevel().random)) {
+                        || !canOutput(outputInventory, fluidHandler, controller.getLevel().random)) {
                     updateLastRecipe(controller);
                     return;
                 }
